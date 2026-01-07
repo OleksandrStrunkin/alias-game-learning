@@ -20,6 +20,10 @@ interface GameState {
   roomCode: string | null;
   roundEndTime: number | null;
   myPlayerId: string | null;
+  selectedCategories: string[];
+  isPaused: boolean;
+  timeLeftOnPause: number | null;
+  roundDuration: number;
   // Methods
   addTeam: (name: string, playerId: string) => void;
   setMyPlayerId: (id: string) => void;
@@ -32,6 +36,11 @@ interface GameState {
   updateScore: (word: string, isCorrect: boolean) => void;
   newRound: () => void;
   resetGame: () => void;
+  toggleCategory: (category: string) => void;
+  setPaused: (paused: boolean) => void;
+  pauseRound: () => void;
+  resumeRound: () => void;
+  setRoundDuration: (duration: number) => void;
 }
 
 export const useGameStore = create<GameState>((set) => ({
@@ -42,7 +51,57 @@ export const useGameStore = create<GameState>((set) => ({
   roomCode: null,
   roundEndTime: null,
   myPlayerId: null,
+  selectedCategories: ["A2"],
+  isPaused: false,
+  timeLeftOnPause: null,
+  roundDuration: 60,
   setMyPlayerId: (id) => set({ myPlayerId: id }),
+  setRoundDuration: (duration) => set({ roundDuration: duration }),
+
+  pauseRound: () =>
+    set((state) => {
+      if (!state.roundEndTime || state.isPaused) return state;
+
+      const now = Date.now();
+      const remaining = state.roundEndTime - now;
+
+      return {
+        isPaused: true,
+        timeLeftOnPause: remaining > 0 ? remaining : 0,
+        roundEndTime: null,
+      };
+    }),
+  resumeRound: () =>
+    set((state) => {
+      if (!state.isPaused || state.timeLeftOnPause === null) return state;
+
+      const newEndTime = Date.now() + state.timeLeftOnPause;
+
+      return {
+        isPaused: false,
+        roundEndTime: newEndTime,
+        timeLeftOnPause: null,
+      };
+    }),
+  setPaused: (paused) => set({ isPaused: paused }),
+
+  toggleCategory: (category) =>
+    set((state) => {
+      if (category === "API") {
+        return { selectedCategories: ["API"] };
+      }
+      let newCats = state.selectedCategories.filter((c) => c !== "API");
+
+      if (newCats.includes(category)) {
+        if (newCats.length > 1) {
+          newCats = newCats.filter((c) => c !== category);
+        }
+      } else {
+        newCats.push(category);
+      }
+
+      return { selectedCategories: newCats };
+    }),
 
   setGameState: (state) => set({ isGameStarted: state }),
   setRoomCode: (code) => set({ roomCode: code }),
@@ -52,11 +111,18 @@ export const useGameStore = create<GameState>((set) => ({
       ...newState,
       myPlayerId: state.myPlayerId,
       roomCode: state.roomCode,
+      selectedCategories:
+        newState.selectedCategories || state.selectedCategories,
+      isPaused: newState.isPaused ?? state.isPaused,
+      timeLeftOnPause: newState.timeLeftOnPause ?? state.timeLeftOnPause,
+      roundDuration: newState.roundDuration || state.roundDuration,
     })),
 
   startGame: (endTime) =>
     set({
       isGameStarted: true,
+      isPaused: false,
+      timeLeftOnPause: null,
       roundEndTime: endTime || Date.now() + 60000,
     }),
 
@@ -101,5 +167,8 @@ export const useGameStore = create<GameState>((set) => ({
       isGameStarted: false,
       currentWord: null,
       roomCode: null,
+      selectedCategories: ["A2"],
+      isPaused: false,
+      timeLeftOnPause: null,
     }),
 }));

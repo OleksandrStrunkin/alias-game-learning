@@ -90,9 +90,23 @@ export default function Home() {
   const fetchWord = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch("https://www.wordgamedb.com/api/v1/words/random");
-      const data = await res.json();
-      store.setWord(data);
+      if (store.selectedCategories.includes("API")) {
+        const res = await fetch(
+          "https://www.wordgamedb.com/api/v1/words/random"
+        );
+        const data = await res.json();
+        store.setWord(data);
+      } else {
+        const { data, error } = await supabase.rpc("get_random_word", {
+          categories: store.selectedCategories,
+        });
+
+        if (data && data.length > 0) {
+          store.setWord(data[0]);
+        } else if (error) {
+          console.error("RPC Error:", error);
+        }
+      }
     } finally {
       setLoading(false);
     }
@@ -154,6 +168,29 @@ export default function Home() {
           <h2 className="text-center text-amber-200/50 text-xs font-black uppercase tracking-[0.3em] mb-8">
             Waiting for Players
           </h2>
+          <div className="bg-white/5 border border-white/10 p-6 rounded-3xl mb-6">
+            <h3 className="text-amber-400/50 text-[10px] font-black uppercase tracking-[0.2em] mb-4 text-center">
+              Select Word Sources
+            </h3>
+            <div className="flex flex-wrap justify-center gap-2">
+              {["A2", "B1", "B2", "API"].map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => {
+                    store.toggleCategory(cat);
+                    pushUpdate(useGameStore.getState());
+                  }}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border ${
+                    store.selectedCategories.includes(cat)
+                      ? "bg-amber-500 border-amber-400 text-[#1a1410] shadow-lg shadow-amber-900/40"
+                      : "bg-white/5 border-white/10 text-amber-200/40 hover:bg-white/10"
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+          </div>
 
           <div className="space-y-3 mb-10">
             {store.teams.map((t, i) => (
@@ -205,16 +242,42 @@ export default function Home() {
     );
   }
 
-  // Гра
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-[#1a1410] via-[#241a16] to-[#31241c] p-4">
+    <div className="min-h-screen flex flex-col items-center md:justify-center md:bg-gradient-to-br from-[#1a1410] via-[#241a16] to-[#31241c] p-4">
       <div className="w-full max-w-7xl grid lg:grid-cols-12 gap-6 h-[85vh]">
-        <main className="lg:col-span-5 relative flex flex-col p-8 rounded-3xl backdrop-blur-xl bg-white/10 border border-white/10 shadow-2xl shadow-black/40">
-          <div className="absolute top-4 left-6 text-xs font-black text-amber-400/60 uppercase tracking-widest">
+        <main className=" lg:col-span-5 relative flex flex-col p-6 rounded-3xl backdrop-blur-xl bg-white/10 border border-white/10 shadow-2xl shadow-black/40">
+          <div className="mb-4 text-xs font-black text-amber-400/60 uppercase tracking-widest">
             Room: {store.roomCode}
           </div>
 
           <GamePanel fetchWord={fetchWord} loading={loading} />
+
+          <div className="mt-6 mb-4">
+            <p className="text-[9px] font-black text-amber-400/30 uppercase tracking-[0.2em] mb-3 text-center">
+              Change difficulty for next round
+            </p>
+            <div className="flex justify-center gap-1.5">
+              {["A2", "B1", "B2", "API"].map((cat) => {
+                const isActive = store.selectedCategories.includes(cat);
+                return (
+                  <button
+                    key={cat}
+                    onClick={() => {
+                      store.toggleCategory(cat);
+                      setTimeout(() => pushUpdate(useGameStore.getState()), 50);
+                    }}
+                    className={`px-3 py-1.5 rounded-lg text-[10px] font-black transition-all border ${
+                      isActive
+                        ? "bg-amber-500/80 border-amber-400 text-[#1a1410] shadow-sm"
+                        : "bg-white/5 border-white/5 text-amber-100/20 hover:bg-white/10 hover:text-amber-100/40"
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
 
           <div className="mt-auto pt-4 flex gap-2">
             <button
