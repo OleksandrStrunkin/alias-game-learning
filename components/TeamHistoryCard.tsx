@@ -6,28 +6,27 @@ interface TeamHistoryCardProps {
   index: number;
 }
 
-export const TeamHistoryCard = ({
-  team,
-  isActive,
-  index,
-}: TeamHistoryCardProps) => (
+export const TeamHistoryCard = ({ team, isActive, index }: TeamHistoryCardProps) => (
   <div
-    className={`flex flex-col bg-[#111114]/70 border rounded-2xl p-4 transition-all max-h-[90vh] ${
-      isActive
-        ? "border-indigo-500/40 ring-1 ring-indigo-500/20 shadow-2xl"
-        : "border-white/5 opacity-60"
-    }`}
+    className={`flex flex-col p-4 rounded-2xl transition-all max-h-[90vh] backdrop-blur-xl shadow-lg
+      ${
+        isActive
+          ? "bg-amber-100/10 border border-amber-400/30 shadow-amber-900/30 ring-1 ring-amber-400/20"
+          : "bg-white/5 border border-white/10 opacity-70"
+      }`}
   >
-    <div className="flex justify-between items-end mb-6 border-b border-white/5 pb-4 shrink-0">
+    <div className="flex justify-between items-end mb-6 border-b border-white/10 pb-4 shrink-0">
       <div className="max-w-[70%]">
-        <h3 className="text-xs font-black uppercase tracking-[0.3em] text-white/30 mb-1">
+        <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-amber-200/50 mb-1">
           Team {index + 1}
         </h3>
-        <p className="text-2xl font-black uppercase italic text-white truncate">
+        <p className="text-2xl font-black uppercase italic text-amber-100 truncate drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">
           {team.name}
         </p>
       </div>
-      <div className="text-4xl font-black text-green-500">{team.score}</div>
+      <div className="text-4xl font-black text-amber-400 drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)]">
+        {team.score}
+      </div>
     </div>
     <div className="flex-1 overflow-y-auto overflow-x-hidden pr-2 space-y-2 custom-scrollbar min-h-0">
       {[...team.history].reverse().map((item, i) => (
