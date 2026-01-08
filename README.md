@@ -1,36 +1,77 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🎙️ Alias Online
 
-## Getting Started
+A fully synchronized, multiplayer "Alias" (Taboo) game built for real-time play with friends. This project focuses on seamless state synchronization across multiple devices using a modern tech stack.
 
-First, run the development server:
+## ✨ Key Features
 
+* **Real-time Synchronization:** Powered by Supabase Realtime. Timer, scores, and game pauses are synced instantly across all connected players.
+* **Customizable Game Rules:** Host can adjust round duration (60s - 180s) and select difficulty levels (A2, B1, B2).
+* **Smart Pause System:** Ability to pause the game at any moment. The remaining time is preserved and synchronized for all participants.
+* **Responsive Design:** A sleek, dark-themed UI optimized for both mobile and desktop browsers.
+* **Dynamic Word Sources:** Supports both a local PostgreSQL word database and external API integration.
+
+## 🛠 Tech Stack
+
+* **Frontend Framework:** [Next.js 14](https://nextjs.org/) (App Router)
+* **Language:** TypeScript
+* **State Management:** [Zustand](https://docs.pmnd.rs/zustand/) (with custom Supabase sync logic)
+* **Backend/Database:** [Supabase](https://supabase.com/) (PostgreSQL + Realtime CDC)
+* **Styling:** Tailwind CSS + Framer Motion
+
+## 🚀 Quick Start
+
+### 1. Clone the repository
 ```bash
+git clone [https://github.com/your-username/catherine-alias.git](https://github.com/your-username/catherine-alias.git)
+cd catherine-alias
+
+2. Install dependencies
+Bash
+
+npm install
+3. Environment Setup
+Create a .env.local file in the root directory and add your Supabase credentials:
+
+Фрагмент коду
+
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+4. Database Configuration
+Create a table named lobbies in your Supabase project:
+
+id: int8 (Primary Key)
+
+code: text (Unique) — The room entry code.
+
+game_state: jsonb — Holds the entire synchronized game object.
+
+created_at: timestamp
+
+Crucial: Enable Realtime for the lobbies table under Database -> Replication -> supabase_realtime.
+
+5. Run the development server
+Bash
+
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+🎮 How to Play
+Create a Game: Click "Create Game" to generate a unique 4-digit room code.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Join: Friends enter the code and create their team names.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Configure: The host selects categories and sets the timer.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Describe: When it's your turn, hit "Start Round" and describe the words appearing on the screen without using the word itself!
 
-## Learn More
+🏗 Synchronization Architecture
+The project follows a "Single Source of Truth" model:
 
-To learn more about Next.js, take a look at the following resources:
+Any action (pausing, scoring, skipping) updates the local Zustand store.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The updated state is pushed to the Supabase JSONB column via an UPDATE query.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+All other clients listen for changes via PostgreSQL Change Data Capture (CDC).
 
-## Deploy on Vercel
+Upon receiving an update, clients trigger syncFromSupabase to merge the new state while preserving local-only identifiers like myPlayerId.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+📄 License
+This project is open-source and available under the MIT License.

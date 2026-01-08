@@ -107,15 +107,19 @@ export const useGameStore = create<GameState>((set) => ({
   setRoomCode: (code) => set({ roomCode: code }),
 
   syncFromSupabase: (newState) =>
+    
     set((state) => ({
       ...newState,
       myPlayerId: state.myPlayerId,
       roomCode: state.roomCode,
       selectedCategories:
         newState.selectedCategories || state.selectedCategories,
-      isPaused: newState.isPaused ?? state.isPaused,
-      timeLeftOnPause: newState.timeLeftOnPause ?? state.timeLeftOnPause,
+      
       roundDuration: newState.roundDuration || state.roundDuration,
+
+      isPaused: newState.isPaused,
+      timeLeftOnPause: newState.timeLeftOnPause,
+      roundEndTime: newState.roundEndTime,
     })),
 
   startGame: (endTime) =>

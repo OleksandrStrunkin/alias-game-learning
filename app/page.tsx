@@ -69,13 +69,7 @@ export default function Home() {
         },
         (payload) => {
           const incomingState = payload.new.game_state;
-
-          const currentState = useGameStore.getState();
-          if (
-            JSON.stringify(incomingState.teams) !==
-              JSON.stringify(currentState.teams) ||
-            incomingState.isGameStarted !== currentState.isGameStarted
-          ) {
+          if (incomingState) {
             store.syncFromSupabase(incomingState);
           }
         }

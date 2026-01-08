@@ -17,62 +17,60 @@ export const GamePanel = ({ fetchWord, loading }: GamePanelProps) => {
   const isMyTurn = activeTeam?.playerId === store.myPlayerId;
   const isPaused = store.isPaused;
 
-  const pushUpdate = async (manualState?: any) => {
-    if (!store.roomCode) return;
-    const stateToPush = manualState || useGameStore.getState();
-    const pureData = JSON.parse(JSON.stringify(stateToPush));
-    await supabase
-      .from("lobbies")
-      .update({ game_state: pureData })
-      .eq("code", store.roomCode);
-  };
+const pushUpdate = async (manualState?: any) => {
+  if (!store.roomCode) return;
+  const stateToPush = manualState || useGameStore.getState();
+  const pureData = JSON.parse(JSON.stringify(stateToPush));
+  delete pureData.myPlayerId;
+
+  await supabase
+    .from("lobbies")
+    .update({ game_state: pureData })
+    .eq("code", store.roomCode);
+};
 
   useEffect(() => {
     setShowHint(false);
   }, [store.currentWord]);
 
  
-  useEffect(() => {
-    if (!store.isGameStarted) {
-      setTimeLeft(store.roundDuration);
-      return;
-    }
+ useEffect(() => {
+   if (!store.isGameStarted) {
+     setTimeLeft(store.roundDuration);
+     return;
+   }
+   if (isPaused) {
+     if (store.timeLeftOnPause !== null) {
+       setTimeLeft(Math.ceil(store.timeLeftOnPause / 1000));
+     }
+     return;
+   }
+   if (!store.roundEndTime) return;
 
-    const interval = setInterval(() => {
-      if (isPaused && store.timeLeftOnPause !== null) {
-        setTimeLeft(Math.ceil(store.timeLeftOnPause / 1000));
-      } else if (store.roundEndTime) {
-        const now = Date.now();
-        const remaining = Math.max(
-          0,
-          Math.ceil((store.roundEndTime - now) / 1000)
-        );
+   const interval = setInterval(() => {
+     const now = Date.now();
+     const remaining = Math.max(
+       0,
+       Math.ceil((store.roundEndTime! - now) / 1000)
+     );
+     setTimeLeft(remaining);
 
-        setTimeLeft(remaining);
+     if (remaining === 0 && isMyTurn) {
+       clearInterval(interval);
+       store.nextTeam();
+       pushUpdate(useGameStore.getState());
+     }
+   }, 500);
 
-        if (remaining === 0 && isMyTurn) {
-          clearInterval(interval);
-          store.nextTeam();
-          pushUpdate(useGameStore.getState());
-        }
-      }
-    }, 500);
+   return () => clearInterval(interval);
+ }, [
+   store.isGameStarted,
+   store.roundEndTime,
+   isPaused,
+   store.timeLeftOnPause,
+   isMyTurn,
+ ]);
 
-    return () => clearInterval(interval);
-  }, [
-    store.isGameStarted,
-    store.roundEndTime,
-    isPaused,
-    store.timeLeftOnPause,
-    isMyTurn,
-    store.roundDuration,
-  ]);
-
-  useEffect(() => {
-    if (!store.isGameStarted) {
-      setTimeLeft(store.roundDuration);
-    }
-  }, [store.roundDuration, store.isGameStarted]);
 
   const handleStart = async () => {
     await fetchWord();
@@ -90,13 +88,22 @@ export const GamePanel = ({ fetchWord, loading }: GamePanelProps) => {
   };
 
   const handlePause = async () => {
+    console.log("--- PAUSE ACTION START ---");
     if (store.isPaused) {
       store.resumeRound();
     } else {
       store.pauseRound();
     }
+
     const latestState = useGameStore.getState();
+    console.log("Local state after toggle:", {
+      isPaused: latestState.isPaused,
+      timeLeftOnPause: latestState.timeLeftOnPause,
+      roundEndTime: latestState.roundEndTime,
+    });
+
     await pushUpdate(latestState);
+    console.log("Update pushed to Supabase");
   };
 
   if (!store.isGameStarted || timeLeft === 0) {
