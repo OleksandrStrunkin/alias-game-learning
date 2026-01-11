@@ -239,7 +239,7 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col items-center md:justify-center md:bg-gradient-to-br from-[#1a1410] via-[#241a16] to-[#31241c] p-4">
       <div className="w-full max-w-7xl grid lg:grid-cols-12 gap-6 h-[85vh]">
-        <main className=" lg:col-span-5 relative flex flex-col p-6 rounded-3xl backdrop-blur-xl bg-white/10 border border-white/10 shadow-2xl shadow-black/40">
+        <main className=" lg:col-span-5 relative flex flex-col p-6 rounded-xl backdrop-blur-xl bg-white/10 border border-white/10 shadow-2xl shadow-black/40">
           <div className="mb-4 text-xs font-black text-amber-400/60 uppercase tracking-widest">
             Room: {store.roomCode}
           </div>
@@ -299,7 +299,7 @@ export default function Home() {
           </div>
         </main>
 
-        <aside className="lg:col-span-7 grid md:grid-cols-2 gap-6">
+        <aside className="grid-cols-2 gap-1 lg:col-span-7 grid md:grid-cols-2 md:gap-6">
           {store.teams.map((team, idx) => (
             <TeamHistoryCard
               key={idx}

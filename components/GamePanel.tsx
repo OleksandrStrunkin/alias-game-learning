@@ -88,7 +88,6 @@ const pushUpdate = async (manualState?: any) => {
   };
 
   const handlePause = async () => {
-    console.log("--- PAUSE ACTION START ---");
     if (store.isPaused) {
       store.resumeRound();
     } else {
@@ -96,21 +95,14 @@ const pushUpdate = async (manualState?: any) => {
     }
 
     const latestState = useGameStore.getState();
-    console.log("Local state after toggle:", {
-      isPaused: latestState.isPaused,
-      timeLeftOnPause: latestState.timeLeftOnPause,
-      roundEndTime: latestState.roundEndTime,
-    });
-
     await pushUpdate(latestState);
-    console.log("Update pushed to Supabase");
   };
 
   if (!store.isGameStarted || timeLeft === 0) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center text-center space-y-8 animate-in fade-in min-h-[300px] lg:min-h-[350px]">
         {timeLeft !== 0 && (
-          <div className="w-full max-w-xs p-4 bg-white/5 rounded-2xl border border-white/10">
+          <div className="w-full max-w-xs p-4 bg-white/5 rounded-xl border border-white/10">
             <p className="text-[10px] font-black text-amber-400/50 uppercase tracking-[0.2em] mb-4">
               Round Duration:{" "}
               <span className="text-amber-400 text-sm">
@@ -127,8 +119,9 @@ const pushUpdate = async (manualState?: any) => {
               onChange={(e) => {
                 const val = parseInt(e.target.value);
                 store.setRoundDuration(val);
-                setTimeout(() => pushUpdate(useGameStore.getState()), 50);
               }}
+              onMouseUp={() => pushUpdate()}
+              onTouchEnd={() => pushUpdate()}
               className="w-full h-1.5 bg-white/10 rounded-lg appearance-none cursor-pointer accent-amber-500"
             />
           </div>
@@ -158,19 +151,19 @@ const pushUpdate = async (manualState?: any) => {
   return (
     <>
       <div className="flex justify-between items-center mb-6">
-        <div className="text-7xl font-mono font-black text-amber-400 drop-shadow-[0_1px_3px_rgba(255,191,0,0.2)]">
+        <div className="text-6xl font-mono font-black text-amber-400 drop-shadow-[0_1px_3px_rgba(255,191,0,0.2)]">
           {timeLeft}
         </div>
         <button
           disabled={!isMyTurn}
           onClick={handlePause}
-          className="text-[10px] px-6 py-2 rounded-full font-black uppercase bg-white/5 text-amber-100/40 hover:text-amber-100 hover:bg-white/10 transition-all"
+          className="text-sm px-6 py-4 rounded-full font-black uppercase bg-white/5 text-amber-100/40 hover:text-amber-100 hover:bg-white/10 transition-all"
         >
           {isPaused ? "Resume" : "Pause"}
         </button>
       </div>
 
-      <div className="flex-1 flex flex-col items-center justify-center text-center px-4 min-h-[300px] lg:min-h-[350px] relative">
+      <div className="flex-1 flex flex-col items-center justify-center text-center px-4 min-h-[220px] lg:min-h-[350px] relative">
         {isPaused ? (
           <div className="text-2xl uppercase tracking-[0.5em] text-amber-200/60 font-black italic animate-in fade-in duration-300">
             Paused
@@ -184,7 +177,7 @@ const pushUpdate = async (manualState?: any) => {
             <span className="text-lg uppercase font-black tracking-[0.4em] text-amber-400 block h-7 mb-3">
               {store.currentWord?.category || " "}
             </span>
-            <div className="min-h-[120px] flex items-center justify-center max-w-[280px] lg:max-w-none">
+            <div className="min-h-[100px] flex items-center justify-center max-w-[280px] lg:max-w-none">
               <h2 className="text-4xl lg:text-6xl font-black uppercase italic tracking-tighter leading-tight text-amber-50 drop-shadow-[0_2px_6px_rgba(0,0,0,0.5)]">
                 {store.currentWord?.word}
               </h2>
