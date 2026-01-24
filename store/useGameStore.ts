@@ -1,3 +1,4 @@
+import { FallbackMode } from "next/dist/lib/fallback";
 import { create } from "zustand";
 
 interface HistoryItem {
@@ -24,6 +25,7 @@ interface GameState {
   isPaused: boolean;
   timeLeftOnPause: number | null;
   roundDuration: number;
+  isOvertime: boolean;
   // Methods
   addTeam: (name: string, playerId: string) => void;
   setMyPlayerId: (id: string) => void;
@@ -41,6 +43,7 @@ interface GameState {
   pauseRound: () => void;
   resumeRound: () => void;
   setRoundDuration: (duration: number) => void;
+  setOvertime: (val: boolean) => void;
 }
 
 export const useGameStore = create<GameState>((set) => ({
@@ -55,9 +58,10 @@ export const useGameStore = create<GameState>((set) => ({
   isPaused: false,
   timeLeftOnPause: null,
   roundDuration: 60,
+  isOvertime: false,
   setMyPlayerId: (id) => set({ myPlayerId: id }),
   setRoundDuration: (duration) => set({ roundDuration: duration }),
-
+  setOvertime: (val) => set({ isOvertime: val }),
   pauseRound: () =>
     set((state) => {
       if (!state.roundEndTime || state.isPaused) return state;
@@ -107,25 +111,26 @@ export const useGameStore = create<GameState>((set) => ({
   setRoomCode: (code) => set({ roomCode: code }),
 
   syncFromSupabase: (newState) =>
-    
     set((state) => ({
       ...newState,
       myPlayerId: state.myPlayerId,
       roomCode: state.roomCode,
       selectedCategories:
         newState.selectedCategories || state.selectedCategories,
-      
+
       roundDuration: newState.roundDuration || state.roundDuration,
 
       isPaused: newState.isPaused,
       timeLeftOnPause: newState.timeLeftOnPause,
       roundEndTime: newState.roundEndTime,
+      isOvertime: newState.isOvertime ?? state.isOvertime,
     })),
 
   startGame: (endTime) =>
     set({
       isGameStarted: true,
       isPaused: false,
+      isOvertime: false,
       timeLeftOnPause: null,
       roundEndTime: endTime || Date.now() + 60000,
     }),
@@ -141,6 +146,7 @@ export const useGameStore = create<GameState>((set) => ({
       isGameStarted: false,
       currentWord: null,
       roundEndTime: null,
+      isOvertime: false,
     })),
 
   setWord: (word) => set({ currentWord: word }),
@@ -162,6 +168,7 @@ export const useGameStore = create<GameState>((set) => ({
       currentWord: null,
       teams: state.teams.map((t) => ({ ...t, score: 0, history: [] })),
       currentTeamIndex: 0,
+      isOvertime: false,
     })),
 
   resetGame: () =>
@@ -174,5 +181,6 @@ export const useGameStore = create<GameState>((set) => ({
       selectedCategories: ["A2"],
       isPaused: false,
       timeLeftOnPause: null,
+      isOvertime: false,
     }),
 }));

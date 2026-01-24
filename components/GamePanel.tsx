@@ -55,10 +55,10 @@ const pushUpdate = async (manualState?: any) => {
      );
      setTimeLeft(remaining);
 
-     if (remaining === 0 && isMyTurn) {
-       clearInterval(interval);
-       store.nextTeam();
+     if (remaining === 0 && isMyTurn && !store.isOvertime) {
+       store.setOvertime(true);
        pushUpdate(useGameStore.getState());
+       clearInterval(interval);
      }
    }, 500);
 
@@ -69,6 +69,7 @@ const pushUpdate = async (manualState?: any) => {
    isPaused,
    store.timeLeftOnPause,
    isMyTurn,
+   store.isOvertime,
  ]);
 
 
@@ -82,8 +83,14 @@ const pushUpdate = async (manualState?: any) => {
   const handleAction = async (isCorrect: boolean) => {
     if (store.currentWord && isMyTurn) {
       store.updateScore(store.currentWord.word, isCorrect);
-      await fetchWord();
-      await pushUpdate();
+
+      if (store.isOvertime) {
+        store.nextTeam();
+        await pushUpdate(useGameStore.getState());
+      } else {
+        await fetchWord();
+        await pushUpdate();
+      }
     }
   };
 
@@ -98,7 +105,7 @@ const pushUpdate = async (manualState?: any) => {
     await pushUpdate(latestState);
   };
 
-  if (!store.isGameStarted || timeLeft === 0) {
+  if (!store.isGameStarted && !store.isOvertime) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center text-center space-y-8 animate-in fade-in min-h-[300px] lg:min-h-[350px]">
         {timeLeft !== 0 && (
@@ -152,7 +159,13 @@ const pushUpdate = async (manualState?: any) => {
     <>
       <div className="flex justify-between items-center mb-6">
         <div className="text-6xl font-mono font-black text-amber-400 drop-shadow-[0_1px_3px_rgba(255,191,0,0.2)]">
-          {timeLeft}
+          {store.isOvertime ? (
+            <span className="animate-pulse text-3xl">
+              LAST WORD
+            </span>
+          ) : (
+            timeLeft
+          )}
         </div>
         <button
           disabled={!isMyTurn}
@@ -181,8 +194,8 @@ const pushUpdate = async (manualState?: any) => {
               <h2 className="text-4xl lg:text-6xl font-black uppercase italic tracking-tighter leading-tight text-amber-50 drop-shadow-[0_2px_6px_rgba(0,0,0,0.5)]">
                 {store.currentWord?.word}
               </h2>
-                </div>
-                
+            </div>
+
             <div className="h-[60px] mt-4 flex items-center justify-center">
               {store.currentWord?.hint ? (
                 !showHint ? (
