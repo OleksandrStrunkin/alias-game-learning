@@ -4,6 +4,7 @@ import { useGameStore } from "@/store/useGameStore";
 import { supabase } from "@/lib/supabase";
 import { GameControls } from "./GameControls";
 import { Timer } from "./Timer";
+import { RoundPreparation } from "./RoundPreparation";
 
 interface GamePanelProps {
   fetchWord: () => void;
@@ -109,50 +110,15 @@ const pushUpdate = async (manualState?: any) => {
 
   if (!store.isGameStarted && !store.isOvertime) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center text-center space-y-8 animate-in fade-in min-h-[300px] lg:min-h-[350px]">
-        {timeLeft !== 0 && (
-          <div className="w-full max-w-xs p-4 bg-white/5 rounded-xl border border-white/10">
-            <p className="text-[10px] font-black text-amber-400/50 uppercase tracking-[0.2em] mb-4">
-              Round Duration:{" "}
-              <span className="text-amber-400 text-sm">
-                {store.roundDuration}s
-              </span>
-            </p>
-            <input
-              type="range"
-              min="60"
-              max="180"
-              step="10"
-              disabled={!isMyTurn && store.teams.length > 0}
-              value={store.roundDuration}
-              onChange={(e) => {
-                const val = parseInt(e.target.value);
-                store.setRoundDuration(val);
-              }}
-              onMouseUp={() => pushUpdate()}
-              onTouchEnd={() => pushUpdate()}
-              className="w-full h-1.5 bg-white/10 rounded-lg appearance-none cursor-pointer accent-amber-500"
-            />
-          </div>
-        )}
-
-        <div className="space-y-2">
-          <p className="text-amber-400 text-md uppercase font-black tracking-[0.3em]">
-            {timeLeft === 0 ? "Round finished" : "Ready?"}
-          </p>
-          <h2 className="text-5xl font-black uppercase italic text-amber-100 drop-shadow-[0_1px_1px_rgba(0,0,0,0.6)]">
-            {activeTeam?.name}
-          </h2>
-        </div>
-
-        <button
-          disabled={!isMyTurn && store.teams.length > 0}
-          onClick={handleStart}
-          className="px-12 py-5 rounded-2xl font-black uppercase tracking-widest bg-amber-500/90 text-[#1a1410] hover:bg-amber-500 shadow-lg shadow-amber-900/30 transition-all hover:scale-105 disabled:opacity-20"
-        >
-          {timeLeft === 0 ? "Next Team" : "Start Round"}
-        </button>
-      </div>
+      <RoundPreparation 
+        roundDuration={store.roundDuration}
+        timeLeft={timeLeft}
+        activeTeamName={activeTeam?.name}
+        isMyTurn={isMyTurn}
+        onStart={handleStart}
+        onDurationChange={(val) => store.setRoundDuration(val)}
+        onDurationSync={() => pushUpdate()}
+      />
     );
   }
 
