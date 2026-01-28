@@ -2,7 +2,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useGameStore } from "@/store/useGameStore";
 import { TeamHistoryCard } from "@/components/TeamHistoryCard";
-import { GamePanel } from "@/components/GamePanel";
+import { GamePanel } from "@/components/game/GamePanel";
 import { supabase } from "@/lib/supabase";
 
 export default function Home() {

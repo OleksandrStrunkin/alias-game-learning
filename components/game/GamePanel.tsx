@@ -2,6 +2,8 @@
 import { useState, useEffect } from "react";
 import { useGameStore } from "@/store/useGameStore";
 import { supabase } from "@/lib/supabase";
+import { GameControls } from "./GameControls";
+import { Timer } from "./Timer";
 
 interface GamePanelProps {
   fetchWord: () => void;
@@ -158,15 +160,7 @@ const pushUpdate = async (manualState?: any) => {
   return (
     <>
       <div className="flex justify-between items-center mb-6">
-        <div className="text-6xl font-mono font-black text-amber-400 drop-shadow-[0_1px_3px_rgba(255,191,0,0.2)]">
-          {store.isOvertime ? (
-            <span className="animate-pulse text-3xl">
-              LAST WORD
-            </span>
-          ) : (
-            timeLeft
-          )}
-        </div>
+        <Timer timeLeft={timeLeft} isOvertime={store.isOvertime} />
         <button
           disabled={!isMyTurn}
           onClick={handlePause}
@@ -223,23 +217,7 @@ const pushUpdate = async (manualState?: any) => {
           </div>
         )}
       </div>
-
-      <div className="grid grid-cols-2 gap-4 mt-8">
-        <button
-          disabled={!isMyTurn || isPaused}
-          onClick={() => handleAction(false)}
-          className="py-4 rounded-xl border border-white/10 text-amber-50 bg-rose-700/40 font-black uppercase text-md tracking-widest hover:bg-rose-700/60 transition-all disabled:opacity-20"
-        >
-          Skip
-        </button>
-        <button
-          disabled={!isMyTurn || isPaused}
-          onClick={() => handleAction(true)}
-          className="py-4 rounded-xl border border-white/10 bg-emerald-600/50 text-amber-50 font-black uppercase text-md tracking-widest hover:bg-emerald-600 transition-all disabled:opacity-20"
-        >
-          Got it
-        </button>
-      </div>
+      <GameControls onAction={handleAction} disabled={!isMyTurn || isPaused} />
     </>
   );
 };
