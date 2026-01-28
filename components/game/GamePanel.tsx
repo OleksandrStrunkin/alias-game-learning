@@ -1,7 +1,10 @@
 "use client";
 import { useState, useEffect } from "react";
-import { useGameStore } from "@/store/useGameStore";
 import { supabase } from "@/lib/supabase";
+
+import { useGameStore } from "@/store/useGameStore";
+import { useGameTimer } from "@/hooks/useGameTimer";
+
 import { GameControls } from "./GameControls";
 import { Timer } from "./Timer";
 import { RoundPreparation } from "./RoundPreparation";
@@ -14,68 +17,27 @@ interface GamePanelProps {
 
 export const GamePanel = ({ fetchWord, loading }: GamePanelProps) => {
   const store = useGameStore();
-  const [timeLeft, setTimeLeft] = useState(store.roundDuration);
   const [showHint, setShowHint] = useState(false);
 
-  const activeTeam = store.teams[store.currentTeamIndex];
-  const isMyTurn = activeTeam?.playerId === store.myPlayerId;
   const isPaused = store.isPaused;
 
-const pushUpdate = async (manualState?: any) => {
-  if (!store.roomCode) return;
-  const stateToPush = manualState || useGameStore.getState();
-  const pureData = JSON.parse(JSON.stringify(stateToPush));
-  delete pureData.myPlayerId;
+  const pushUpdate = async (manualState?: any) => {
+    if (!store.roomCode) return;
+    const stateToPush = manualState || useGameStore.getState();
+    const pureData = JSON.parse(JSON.stringify(stateToPush));
+    delete pureData.myPlayerId;
 
-  await supabase
-    .from("lobbies")
-    .update({ game_state: pureData })
-    .eq("code", store.roomCode);
-};
+    await supabase
+      .from("lobbies")
+      .update({ game_state: pureData })
+      .eq("code", store.roomCode);
+  };
+
+  const { timeLeft, isMyTurn, activeTeam } = useGameTimer(pushUpdate);
 
   useEffect(() => {
     setShowHint(false);
   }, [store.currentWord]);
-
- 
- useEffect(() => {
-   if (!store.isGameStarted) {
-     setTimeLeft(store.roundDuration);
-     return;
-   }
-   if (isPaused) {
-     if (store.timeLeftOnPause !== null) {
-       setTimeLeft(Math.ceil(store.timeLeftOnPause / 1000));
-     }
-     return;
-   }
-   if (!store.roundEndTime) return;
-
-   const interval = setInterval(() => {
-     const now = Date.now();
-     const remaining = Math.max(
-       0,
-       Math.ceil((store.roundEndTime! - now) / 1000)
-     );
-     setTimeLeft(remaining);
-
-     if (remaining === 0 && isMyTurn && !store.isOvertime) {
-       store.setOvertime(true);
-       pushUpdate(useGameStore.getState());
-       clearInterval(interval);
-     }
-   }, 500);
-
-   return () => clearInterval(interval);
- }, [
-   store.isGameStarted,
-   store.roundEndTime,
-   isPaused,
-   store.timeLeftOnPause,
-   isMyTurn,
-   store.isOvertime,
- ]);
-
 
   const handleStart = async () => {
     await fetchWord();
@@ -111,7 +73,7 @@ const pushUpdate = async (manualState?: any) => {
 
   if (!store.isGameStarted && !store.isOvertime) {
     return (
-      <RoundPreparation 
+      <RoundPreparation
         roundDuration={store.roundDuration}
         timeLeft={timeLeft}
         activeTeamName={activeTeam?.name}
@@ -122,7 +84,6 @@ const pushUpdate = async (manualState?: any) => {
       />
     );
   }
-
 
   return (
     <>
