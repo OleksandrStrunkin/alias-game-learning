@@ -13,16 +13,17 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Online Party Game",
+  title: "CatherineGames - English Learning Platform",
   description:
-    "Play Alias with your friends online. Fast, synchronized, and fun!",
+    "Play educational games with your friends online. Learn English while having fun!",
   keywords: [
     "Alias",
     "Game",
     "Online",
-    "Party Game",
+    "English",
+    "Learning",
     "Multiplayer",
-    "Catherine Alias",
+    "CatherineGames",
   ],
   authors: [{ name: "Ariran" }],
   themeColor: "#f59e0b",

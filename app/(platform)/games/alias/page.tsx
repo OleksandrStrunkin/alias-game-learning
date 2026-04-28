@@ -9,7 +9,7 @@ import { LobbyAuth } from "@/components/lobby/LobbyAuth";
 import { WaitingRoom } from "@/components/lobby/WaitingRoom";
 import { GameDashboard } from "@/components/game/GameDashboard";
 
-export default function Home() {
+export default function AliasPage() {
   const store = useGameStore();
 
   const { pushUpdate } = useGameSync();
@@ -52,7 +52,7 @@ export default function Home() {
 
   if (!store.roomCode) {
     return (
-      <LobbyAuth />
+      <LobbyAuth gameId="alias" gameTitle="Catherine Alias" />
     );
   }
 
