@@ -10,11 +10,11 @@ const games = [
     status: "Active",
   },
   {
-    title: "English Crosswords",
-    description: "Expand your vocabulary by solving daily crosswords.",
-    href: "#",
-    icon: "📝",
-    status: "Soon",
+    title: "Speed Cards",
+    description: "Match words with their translations as fast as you can.",
+    href: "/games/speed-cards",
+    icon: "⚡",
+    status: "Active",
   },
   {
     title: "Grammar Battle",

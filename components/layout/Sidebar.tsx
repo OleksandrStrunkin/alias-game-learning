@@ -4,6 +4,7 @@ import Link from "next/link";
 const navItems = [
   { label: "Dashboard", href: "/", icon: "🏠" },
   { label: "Alias", href: "/games/alias", icon: "🎲" },
+  { label: "Speed Cards", href: "/games/speed-cards", icon: "⚡" },
   { label: "Settings", href: "#", icon: "⚙️", disabled: true },
 ];
 

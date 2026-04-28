@@ -7,7 +7,7 @@ import { useGameSync } from "@/hooks/useGameSync";
 import { useGameStore } from "@/store/useGameStore";
 import { LobbyAuth } from "@/components/lobby/LobbyAuth";
 import { WaitingRoom } from "@/components/lobby/WaitingRoom";
-import { GameDashboard } from "@/components/game/GameDashboard";
+import { GameDashboard } from "@/components/game/alias/GameDashboard";
 
 export default function AliasPage() {
   const store = useGameStore();
@@ -52,7 +52,7 @@ export default function AliasPage() {
 
   if (!store.roomCode) {
     return (
-      <LobbyAuth gameId="alias" gameTitle="Catherine Alias" />
+      <LobbyAuth gameId="alias" gameTitle="Catherine Alias" store={store} />
     );
   }
 

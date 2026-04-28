@@ -6,10 +6,10 @@ import { supabase } from "@/lib/supabase";
 interface LobbyAuthProps {
   gameId: string;
   gameTitle: string;
+  store: any; // Using any for simplicity in this generic component
 }
 
-export const LobbyAuth = ({ gameId, gameTitle }: LobbyAuthProps) => {
-  const store = useGameStore();
+export const LobbyAuth = ({ gameId, gameTitle, store }: LobbyAuthProps) => {
   const [inputCode, setInputCode] = useState("");
   const [error, setError] = useState<string | null>(null);
 

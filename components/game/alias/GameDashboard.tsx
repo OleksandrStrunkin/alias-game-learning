@@ -1,7 +1,7 @@
 "use client";
 import { useGameStore } from "@/store/useGameStore";
 import { GamePanel } from "./GamePanel";
-import { TeamHistoryCard } from "../TeamHistoryCard";
+import { TeamHistoryCard } from "./TeamHistoryCard";
 
 interface GameDashboardProps {
   fetchWord: () => Promise<void>;
