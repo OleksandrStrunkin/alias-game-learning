@@ -13,10 +13,12 @@ export const SpeedCardsSetup = ({ onCreateDuel, onJoinDuel, onStartSolo }: Props
   const [inputCode, setInputCode] = useState("");
 
   return (
-    <div className="min-h-[60vh] flex items-center justify-center p-4">
-      <div className="w-full max-w-md bg-white/5 backdrop-blur-xl border border-white/10 p-10 rounded-[2.5rem] shadow-2xl text-center">
-        <h1 className="text-4xl font-black text-amber-500 mb-2 italic uppercase tracking-tighter">Speed Cards</h1>
-        <p className="text-amber-500/40 text-xs uppercase tracking-widest mb-10 font-bold">Choose your game mode</p>
+    <div className="flex items-center justify-center p-4 py-12">
+      <div className="w-full max-w-md backdrop-blur-xl bg-white/10 border border-white/10 shadow-2xl shadow-black/40 rounded-[2.5rem] p-10 text-center">
+        <h1 className="text-3xl font-black text-amber-400 mb-2 tracking-[0.1em] uppercase italic drop-shadow-[0_1px_1px_rgba(0,0,0,0.4)]">
+          Speed Cards
+        </h1>
+        <p className="text-amber-500/60 mb-10 text-sm tracking-widest uppercase">CatherineGames Platform</p>
 
         <div className="space-y-4">
           {/* Solo Mode */}
@@ -25,16 +27,16 @@ export const SpeedCardsSetup = ({ onCreateDuel, onJoinDuel, onStartSolo }: Props
               store.setGameMode("solo");
               onStartSolo();
             }}
-            className="w-full py-6 bg-amber-500 text-[#1a1410] rounded-2xl font-bold uppercase tracking-widest hover:scale-[1.02] transition-transform shadow-lg shadow-amber-900/20 group"
+            className="w-full py-5 rounded-2xl font-bold uppercase tracking-widest bg-amber-500/90 hover:bg-amber-500 text-[#1a1410] shadow-lg shadow-amber-900/30 transition-all flex flex-col items-center justify-center gap-1"
           >
-            <span className="block text-xl">👤 Solo Play</span>
-            <span className="text-[10px] opacity-70">Train your speed alone</span>
+            <span className="text-lg">👤 Solo Play</span>
+            <span className="text-[10px] opacity-70 normal-case tracking-normal">Train your speed alone</span>
           </button>
 
-          <div className="flex items-center gap-4 text-amber-500/20 my-6">
-            <div className="h-px bg-current flex-1" />
-            <span className="text-[10px] font-bold uppercase italic">or battle</span>
-            <div className="h-px bg-current flex-1" />
+          <div className="flex items-center gap-4 my-6 text-amber-200/40">
+            <div className="h-px bg-amber-200/20 flex-1" />
+            <span className="text-xs font-semibold">or battle</span>
+            <div className="h-px bg-amber-200/20 flex-1" />
           </div>
 
           {/* Duel Mode */}
@@ -45,13 +47,13 @@ export const SpeedCardsSetup = ({ onCreateDuel, onJoinDuel, onStartSolo }: Props
                   store.setGameMode("duel");
                   onCreateDuel();
                 }}
-                className="py-4 bg-white/5 border border-white/10 rounded-2xl font-bold uppercase text-[10px] tracking-widest text-amber-500 hover:bg-white/10 transition-colors"
+                className="py-4 rounded-2xl font-bold uppercase tracking-widest bg-white/5 text-amber-200 border border-white/10 hover:bg-white/10 transition-all shadow-sm text-[10px]"
               >
                 Create Duel
               </button>
               <button
                 onClick={() => setShowJoinInput(true)}
-                className="py-4 bg-white/5 border border-white/10 rounded-2xl font-bold uppercase text-[10px] tracking-widest text-amber-500 hover:bg-white/10 transition-colors"
+                className="py-4 rounded-2xl font-bold uppercase tracking-widest bg-white/5 text-amber-200 border border-white/10 hover:bg-white/10 transition-all shadow-sm text-[10px]"
               >
                 Join Duel
               </button>
@@ -62,7 +64,7 @@ export const SpeedCardsSetup = ({ onCreateDuel, onJoinDuel, onStartSolo }: Props
                 value={inputCode}
                 onChange={(e) => setInputCode(e.target.value.toUpperCase())}
                 placeholder="Enter room code"
-                className="w-full bg-black/40 border border-white/10 p-4 rounded-2xl text-center uppercase text-amber-500 focus:ring-2 focus:ring-amber-500/50 outline-none"
+                className="w-full bg-white/10 border border-white/20 p-4 rounded-2xl text-center uppercase text-amber-100 placeholder-amber-100/30 shadow-inner focus:outline-none focus:ring-2 focus:ring-amber-400/50"
               />
               <div className="grid grid-cols-2 gap-3">
                 <button
@@ -81,6 +83,10 @@ export const SpeedCardsSetup = ({ onCreateDuel, onJoinDuel, onStartSolo }: Props
             </div>
           )}
         </div>
+
+        <p className="mt-8 text-xs text-amber-200/40 tracking-widest">
+          Test your memory speed ✨
+        </p>
       </div>
     </div>
   );

@@ -60,7 +60,7 @@ export const LobbyAuth = ({ gameId, gameTitle, store }: LobbyAuthProps) => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#1a1410] via-[#241a16] to-[#31241c] p-4">
+    <div className="flex items-center justify-center p-4 py-12">
       <div className="w-full max-w-md backdrop-blur-xl bg-white/10 border border-white/10 shadow-2xl shadow-black/40 rounded-[2.5rem] p-10 text-center">
         <h1 className="text-3xl font-black text-amber-400 mb-2 tracking-[0.1em] uppercase italic drop-shadow-[0_1px_1px_rgba(0,0,0,0.4)]">
           {gameTitle}
