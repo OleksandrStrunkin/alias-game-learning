@@ -43,52 +43,52 @@
 }
 
 :root {
-  /* Main background and text - Light Theme */
-  --background: #fdfaf7;
-  --foreground: #2d241e;
+  /* Main background and text - Original Dark Amber */
+  --background: #1a1410;
+  --foreground: #fbbf24;
 
   /* UI elements */
-  --card: #ffffff;
-  --card-foreground: #2d241e;
+  --card: #1f1813;
+  --card-foreground: #fef3c7;
   
-  --popover: #ffffff;
-  --popover-foreground: #2d241e;
+  --popover: #1f1813;
+  --popover-foreground: #fef3c7;
 
-  /* Brand / Primary - Adjusted for light */
-  --primary: #d97706; /* Warmer, slightly darker amber for better contrast */
-  --primary-foreground: #ffffff;
-  --primary-hover: #b45309;
+  /* Brand / Primary */
+  --primary: #fbbf24;
+  --primary-foreground: #1a1410;
+  --primary-hover: #f59e0b;
 
   /* Secondary / Muted */
-  --secondary: #f3ece4;
-  --secondary-foreground: #5d4d42;
-  --secondary-hover: #e9dec6;
+  --secondary: #2d241e;
+  --secondary-foreground: #fbbf24;
+  --secondary-hover: #3d3028;
 
-  --muted: #f3ece4;
-  --muted-foreground: #8a7462;
+  --muted: #2d241e;
+  --muted-foreground: #a0846c;
 
   /* Accent */
   --accent: #f59e0b;
-  --accent-foreground: #ffffff;
+  --accent-foreground: #1a1410;
 
   /* Semantic - Success */
-  --success: #059669;
-  --success-foreground: #ffffff;
-  --success-hover: #047857;
+  --success: #10b981;
+  --success-foreground: #ecfdf5;
+  --success-hover: #059669;
 
   /* Semantic - Destructive/Error */
-  --destructive: #dc2626;
-  --destructive-foreground: #ffffff;
-  --destructive-hover: #b91c1c;
+  --destructive: #ef4444;
+  --destructive-foreground: #fef2f2;
+  --destructive-hover: #dc2626;
 
   /* Borders and Inputs */
-  --border: #e2d1c3;
-  --input: #e2d1c3;
-  --ring: #d97706;
+  --border: #3d3028;
+  --input: #3d3028;
+  --ring: #fbbf24;
 
   --radius: 0.75rem;
 
-  color-scheme: light;
+  color-scheme: dark;
 }
 
 body {
