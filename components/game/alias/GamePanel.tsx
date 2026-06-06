@@ -92,7 +92,7 @@ export const GamePanel = ({ fetchWord, loading }: GamePanelProps) => {
         <button
           disabled={!isMyTurn}
           onClick={handlePause}
-          className="text-sm px-6 py-4 rounded-full font-black uppercase bg-white/5 text-amber-100/40 hover:text-amber-100 hover:bg-white/10 transition-all"
+          className="text-sm px-6 py-4 rounded-full font-black uppercase bg-secondary/5 text-primary/40 hover:text-primary hover:bg-secondary/10 transition-all"
         >
           {isPaused ? "Resume" : "Pause"}
         </button>

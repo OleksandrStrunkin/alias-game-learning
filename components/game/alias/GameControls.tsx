@@ -9,14 +9,14 @@ export const GameControls = ({ onAction, disabled }: Props) => {
       <button
         disabled={disabled}
         onClick={() => onAction(false)}
-        className="py-4 rounded-xl border border-white/10 text-amber-50 bg-rose-700/40 font-black uppercase text-md tracking-widest hover:bg-rose-700/60 transition-all disabled:opacity-20"
+        className="py-4 rounded-xl border border-border text-destructive-foreground bg-destructive/40 font-black uppercase text-md tracking-widest hover:bg-destructive-hover transition-all disabled:opacity-20"
       >
         Skip
       </button>
       <button
         disabled={disabled}
         onClick={() => onAction(true)}
-        className="py-4 rounded-xl border border-white/10 bg-emerald-600/50 text-amber-50 font-black uppercase text-md tracking-widest hover:bg-emerald-600 transition-all disabled:opacity-20"
+        className="py-4 rounded-xl border border-border bg-success/50 text-success-foreground font-black uppercase text-md tracking-widest hover:bg-success-hover transition-all disabled:opacity-20"
       >
         Got it
       </button>

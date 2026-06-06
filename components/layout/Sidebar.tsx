@@ -10,31 +10,29 @@ const navItems = [
 
 export const Sidebar = () => {
   return (
-    <aside className="w-64 border-r border-amber-500/20 bg-[#1a1410] hidden md:flex flex-col h-[calc(100vh-64px)] sticky top-16">
-      <nav className="p-4 flex-1">
-        <ul className="space-y-2">
-          {navItems.map((item) => (
-            <li key={item.label}>
-              {item.disabled ? (
-                <div className="flex items-center gap-3 px-4 py-2 text-amber-500/30 cursor-not-allowed">
-                  <span>{item.icon}</span>
-                  <span>{item.label}</span>
-                </div>
-              ) : (
-                <Link
-                  href={item.href}
-                  className="flex items-center gap-3 px-4 py-2 text-amber-500 hover:bg-amber-500/10 rounded-lg transition-colors"
-                >
-                  <span>{item.icon}</span>
-                  <span>{item.label}</span>
-                </Link>
-              )}
-            </li>
-          ))}
-        </ul>
+    <aside className="w-64 border-r border-primary/20 bg-background hidden md:flex flex-col h-[calc(100vh-64px)] sticky top-16">
+      <nav className="flex-1 p-4 flex flex-col gap-2">
+        {navItems.map((item) => (
+          <div key={item.label}>
+            {item.disabled ? (
+              <div className="flex items-center gap-3 px-4 py-2 text-primary/30 cursor-not-allowed">
+                {item.icon}
+                <span>{item.label}</span>
+              </div>
+            ) : (
+              <Link
+                href={item.href}
+                className="flex items-center gap-3 px-4 py-2 text-primary hover:bg-primary/10 rounded-lg transition-colors"
+              >
+                {item.icon}
+                <span>{item.label}</span>
+              </Link>
+            )}
+          </div>
+        ))}
       </nav>
-      <div className="p-4 border-t border-amber-500/20 text-xs text-amber-500/50">
-        &copy; 2024 CatherineGames
+      <div className="p-4 border-t border-primary/20 text-xs text-primary/50">
+        &copy; 2026 CatherineGames
       </div>
     </aside>
   );

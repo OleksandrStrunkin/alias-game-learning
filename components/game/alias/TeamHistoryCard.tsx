@@ -11,20 +11,20 @@ export const TeamHistoryCard = ({ team, isActive, index }: TeamHistoryCardProps)
     className={`flex flex-col p-2 md:p-4 rounded-xl transition-all max-h-[90vh] backdrop-blur-xl shadow-lg
       ${
         isActive
-          ? "bg-amber-100/10 border border-amber-400/30 shadow-amber-900/30 ring-1 ring-amber-400/20"
-          : "bg-white/5 border border-white/10 opacity-70"
+          ? "bg-primary/10 border border-primary/30 shadow-primary/30 ring-1 ring-primary/20"
+          : "bg-secondary/5 border border-border opacity-70"
       }`}
   >
-    <div className="flex justify-between items-end mb-6 border-b border-white/10 pb-4 shrink-0">
+    <div className="flex justify-between items-end mb-6 border-b border-border pb-4 shrink-0">
       <div className="max-w-[70%]">
-        <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-amber-200/50 mb-1">
+        <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-primary/50 mb-1">
           Team {index + 1}
         </h3>
-        <p className="text-sm md:text-2xl font-black uppercase italic text-amber-100 truncate drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">
+        <p className="text-sm md:text-2xl font-black uppercase italic text-primary truncate drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">
           {team.name}
         </p>
       </div>
-      <div className="text-2xl md:text-4xl font-black text-amber-400 drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)]">
+      <div className="text-2xl md:text-4xl font-black text-primary drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)]">
         {team.score}
       </div>
     </div>

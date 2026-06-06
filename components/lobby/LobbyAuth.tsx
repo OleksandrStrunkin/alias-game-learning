@@ -61,46 +61,46 @@ export const LobbyAuth = ({ gameId, gameTitle, store }: LobbyAuthProps) => {
 
   return (
     <div className="flex items-center justify-center p-4 py-12">
-      <div className="w-full max-w-md backdrop-blur-xl bg-white/10 border border-white/10 shadow-2xl shadow-black/40 rounded-[2.5rem] p-10 text-center">
-        <h1 className="text-3xl font-black text-amber-400 mb-2 tracking-[0.1em] uppercase italic drop-shadow-[0_1px_1px_rgba(0,0,0,0.4)]">
+      <div className="w-full max-w-md backdrop-blur-xl bg-secondary/10 border border-border shadow-2xl shadow-black/40 rounded-[2.5rem] p-10 text-center">
+        <h1 className="text-3xl font-black text-primary mb-2 tracking-[0.1em] uppercase italic drop-shadow-[0_1px_1px_rgba(0,0,0,0.4)]">
           {gameTitle}
         </h1>
-        <p className="text-amber-500/60 mb-10 text-sm tracking-widest uppercase">CatherineGames Platform</p>
+        <p className="text-primary/60 mb-10 text-sm tracking-widest uppercase">CatherineGames Platform</p>
 
         {error && (
-          <div className="mb-6 p-3 bg-red-500/20 border border-red-500/50 rounded-xl text-red-200 text-sm">
+          <div className="mb-6 p-3 bg-destructive/20 border border-destructive/50 rounded-xl text-destructive-foreground text-sm">
             {error}
           </div>
         )}
 
         <button
           onClick={createLobby}
-          className="w-full py-4 rounded-2xl font-bold uppercase tracking-widest mb-4 bg-amber-500/90 hover:bg-amber-500 text-[#1a1410] shadow-lg shadow-amber-900/30 transition-all"
+          className="w-full py-4 rounded-2xl font-bold uppercase tracking-widest mb-4 bg-primary/90 hover:bg-primary text-primary-foreground shadow-lg shadow-primary/30 transition-all"
         >
           Create Game
         </button>
 
-        <div className="flex items-center gap-4 mb-4 text-amber-200/40">
-          <div className="h-px bg-amber-200/20 flex-1" />
+        <div className="flex items-center gap-4 mb-4 text-primary/40">
+          <div className="h-px bg-primary/20 flex-1" />
           <span className="text-xs font-semibold">or</span>
-          <div className="h-px bg-amber-200/20 flex-1" />
+          <div className="h-px bg-primary/20 flex-1" />
         </div>
 
         <input
           value={inputCode}
           onChange={(e) => setInputCode(e.target.value.toUpperCase())}
           placeholder="Enter code"
-          className="w-full bg-white/10 border border-white/20 p-4 rounded-2xl text-center mb-3 uppercase text-amber-100 placeholder-amber-100/30 shadow-inner focus:outline-none focus:ring-2 focus:ring-amber-400/50"
+          className="w-full bg-secondary/10 border border-border/50 p-4 rounded-2xl text-center mb-3 uppercase text-primary placeholder-primary/30 shadow-inner focus:outline-none focus:ring-2 focus:ring-primary/50"
         />
 
         <button
           onClick={joinLobby}
-          className="w-full py-4 rounded-2xl font-bold uppercase tracking-widest bg-white/5 text-amber-200 border border-white/10 hover:bg-white/10 transition-all shadow-sm"
+          className="w-full py-4 rounded-2xl font-bold uppercase tracking-widest bg-secondary/5 text-primary border border-border hover:bg-secondary/10 transition-all shadow-sm"
         >
           Join Game
         </button>
 
-        <p className="mt-8 text-xs text-amber-200/40 tracking-widest">
+        <p className="mt-8 text-xs text-primary/40 tracking-widest">
           Play with your friends in one click ✨
         </p>
       </div>
