@@ -65,7 +65,7 @@ export const WaitingRoom = ({ pushUpdate }: WaitingRoomProps) => {
               value={tempName}
               onChange={(e) => setTempName(e.target.value)}
               placeholder="Enter team name"
-              className="w-full bg-secondary/10 border border-border p-4 rounded-2xl text-center uppercase text-primary-foreground placeholder-primary/30 outline-none focus:ring-2 focus:ring-primary/50 shadow-inner"
+              className="w-full bg-secondary/10 border border-border p-4 rounded-2xl text-center uppercase  outline-none focus:ring-2 focus:ring-primary/50 shadow-inner"
             />
             <button
               onClick={async () => {
