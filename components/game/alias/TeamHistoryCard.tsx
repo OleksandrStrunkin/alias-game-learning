@@ -6,9 +6,13 @@ interface TeamHistoryCardProps {
   index: number;
 }
 
-export const TeamHistoryCard = ({ team, isActive, index }: TeamHistoryCardProps) => (
+export const TeamHistoryCard = ({
+  team,
+  isActive,
+  index,
+}: TeamHistoryCardProps) => (
   <div
-    className={`flex flex-col p-2 md:p-4 rounded-xl transition-all max-h-[90vh] backdrop-blur-xl shadow-lg
+    className={`flex flex-col p-2 md:py-4 rounded-xl transition-all max-h-[90vh] backdrop-blur-xl shadow-lg
       ${
         isActive
           ? "bg-primary/10 border border-primary/30 shadow-primary/30 ring-1 ring-primary/20"
@@ -28,7 +32,7 @@ export const TeamHistoryCard = ({ team, isActive, index }: TeamHistoryCardProps)
         {team.score}
       </div>
     </div>
-    <div className="flex-1 overflow-y-auto overflow-x-hidden space-y-2 custom-scrollbar min-h-0">
+    <div className="flex-1 overflow-y-auto overflow-x-hidden space-y-2 min-h-0 pr-3">
       {[...team.history].reverse().map((item, i) => (
         <WordItem key={i} word={item.word} isCorrect={item.isCorrect} />
       ))}
