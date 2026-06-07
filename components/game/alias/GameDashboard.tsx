@@ -1,5 +1,5 @@
 "use client";
-import { useGameStore } from "@/store/useGameStore";
+import { useAliasStore } from "@/store/useAliasStore";
 import { GamePanel } from "./GamePanel";
 import { TeamHistoryCard } from "./TeamHistoryCard";
 
@@ -14,7 +14,7 @@ export const GameDashboard = ({
   loading,
   pushUpdate,
 }: GameDashboardProps) => {
-  const store = useGameStore();
+  const store = useAliasStore();
 
   return (
     <div className="flex flex-col items-center md:justify-center">
@@ -38,7 +38,7 @@ export const GameDashboard = ({
                     key={cat}
                     onClick={() => {
                       store.toggleCategory(cat);
-                      setTimeout(() => pushUpdate(useGameStore.getState()), 50);
+                      setTimeout(() => pushUpdate(useAliasStore.getState()), 50);
                     }}
                     className={`px-3 py-1.5 rounded-lg text-[10px] font-black transition-all border ${
                       isActive
@@ -56,7 +56,7 @@ export const GameDashboard = ({
             <button
               onClick={() => {
                 store.newRound();
-                pushUpdate(useGameStore.getState());
+                pushUpdate(useAliasStore.getState());
               }}
               className="flex-1 py-3 text-[10px] font-black uppercase rounded-xl bg-secondary/5 text-primary/40 hover:text-primary hover:bg-secondary/10 transition-all shadow-inner"
             >
@@ -65,7 +65,7 @@ export const GameDashboard = ({
             <button
               onClick={() => {
                 store.resetGame();
-                pushUpdate(useGameStore.getState());
+                pushUpdate(useAliasStore.getState());
               }}
               className="p-3 rounded-xl bg-destructive/10 text-destructive/50 hover:bg-destructive/20 hover:text-destructive-foreground transition-all"
             >

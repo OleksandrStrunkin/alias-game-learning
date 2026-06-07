@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { useGameStore } from "@/store/useGameStore";
+import { useAliasStore } from "@/store/useAliasStore";
 import { supabase } from "@/lib/supabase";
 
 interface LobbyAuthProps {

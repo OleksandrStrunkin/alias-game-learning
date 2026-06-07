@@ -2,8 +2,8 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 
-import { useGameStore } from "@/store/useGameStore";
-import { useGameTimer } from "@/hooks/useGameTimer";
+import { useAliasStore } from "@/store/useAliasStore";
+import { useAliasTimer } from "@/hooks/useAliasTimer";
 
 import { GameControls } from "./GameControls";
 import { Timer } from "./Timer";
@@ -16,14 +16,14 @@ interface GamePanelProps {
 }
 
 export const GamePanel = ({ fetchWord, loading }: GamePanelProps) => {
-  const store = useGameStore();
+  const store = useAliasStore();
   const [showHint, setShowHint] = useState(false);
 
   const isPaused = store.isPaused;
 
   const pushUpdate = async (manualState?: any) => {
     if (!store.roomCode) return;
-    const stateToPush = manualState || useGameStore.getState();
+    const stateToPush = manualState || useAliasStore.getState();
     const pureData = JSON.parse(JSON.stringify(stateToPush));
     delete pureData.myPlayerId;
 
@@ -33,7 +33,7 @@ export const GamePanel = ({ fetchWord, loading }: GamePanelProps) => {
       .eq("code", store.roomCode);
   };
 
-  const { timeLeft, isMyTurn, activeTeam } = useGameTimer(pushUpdate);
+  const { timeLeft, isMyTurn, activeTeam } = useAliasTimer(pushUpdate);
 
   useEffect(() => {
     setShowHint(false);
@@ -43,7 +43,7 @@ export const GamePanel = ({ fetchWord, loading }: GamePanelProps) => {
     await fetchWord();
     const endTime = Date.now() + store.roundDuration * 1000;
     store.startGame(endTime);
-    await pushUpdate(useGameStore.getState());
+    await pushUpdate(useAliasStore.getState());
   };
 
   const handleAction = async (isCorrect: boolean) => {
@@ -52,7 +52,7 @@ export const GamePanel = ({ fetchWord, loading }: GamePanelProps) => {
 
       if (store.isOvertime) {
         store.nextTeam();
-        await pushUpdate(useGameStore.getState());
+        await pushUpdate(useAliasStore.getState());
       } else {
         await fetchWord();
         await pushUpdate();
@@ -67,7 +67,7 @@ export const GamePanel = ({ fetchWord, loading }: GamePanelProps) => {
       store.pauseRound();
     }
 
-    const latestState = useGameStore.getState();
+    const latestState = useAliasStore.getState();
     await pushUpdate(latestState);
   };
 

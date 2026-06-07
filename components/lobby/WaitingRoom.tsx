@@ -1,13 +1,13 @@
 "use client";
 import { useState } from "react";
-import { useGameStore } from "@/store/useGameStore";
+import { useAliasStore } from "@/store/useAliasStore";
 
 interface WaitingRoomProps {
   pushUpdate: (state: any) => Promise<void>;
 }
 
 export const WaitingRoom = ({ pushUpdate }: WaitingRoomProps) => {
-  const store = useGameStore();
+  const store = useAliasStore();
   const [tempName, setTempName] = useState("");
   const iHaveTeam = store.teams.some((t) => t.playerId === store.myPlayerId);
 
@@ -29,7 +29,7 @@ export const WaitingRoom = ({ pushUpdate }: WaitingRoomProps) => {
                 key={cat}
                 onClick={() => {
                   store.toggleCategory(cat);
-                  pushUpdate(useGameStore.getState());
+                  pushUpdate(useAliasStore.getState());
                 }}
                 className={`px-4 py-2 rounded-xl text-[10px] font-bold transition-all border uppercase tracking-wider ${
                   store.selectedCategories.includes(cat)
@@ -72,7 +72,7 @@ export const WaitingRoom = ({ pushUpdate }: WaitingRoomProps) => {
                 if (tempName && store.myPlayerId) {
                   store.addTeam(tempName, store.myPlayerId);
                   setTempName("");
-                  setTimeout(() => pushUpdate(useGameStore.getState()), 50);
+                  setTimeout(() => pushUpdate(useAliasStore.getState()), 50);
                 }
               }}
               className="w-full py-4 rounded-2xl font-bold uppercase tracking-widest bg-primary/90 hover:bg-primary text-primary-foreground shadow-lg shadow-primary/30 transition-all"

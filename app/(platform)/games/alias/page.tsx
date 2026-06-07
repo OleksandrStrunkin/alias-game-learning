@@ -2,17 +2,17 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 
-import { useGameSync } from "@/hooks/useGameSync";
+import { useAliasSync } from "@/hooks/useAliasSync";
 
-import { useGameStore } from "@/store/useGameStore";
+import { useAliasStore } from "@/store/useAliasStore";
 import { LobbyAuth } from "@/components/lobby/LobbyAuth";
 import { WaitingRoom } from "@/components/lobby/WaitingRoom";
 import { GameDashboard } from "@/components/game/alias/GameDashboard";
 
 export default function AliasPage() {
-  const store = useGameStore();
+  const store = useAliasStore();
 
-  const { pushUpdate } = useGameSync();
+  const { pushUpdate } = useAliasSync();
 
   const [loading, setLoading] = useState(false);
 
