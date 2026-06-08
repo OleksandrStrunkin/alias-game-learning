@@ -18,7 +18,7 @@ export const RoundPreparation = ({
   onDurationSync,
 }: Props) => {
   return (
-    <div className="flex-1 flex flex-col items-center justify-center text-center space-y-8 animate-in fade-in min-h-[300px] lg:min-h-[350px]">
+    <div className="flex-1 flex flex-col items-center justify-center text-center space-y-8 animate-in fade-in min-h-75 lg:min-h-87.5">
       {timeLeft !== 0 && (
         <div className="w-full max-w-xs p-4 bg-secondary/5 rounded-xl border border-border">
           <p className="text-[10px] font-black text-primary/50 uppercase tracking-[0.2em] mb-4">

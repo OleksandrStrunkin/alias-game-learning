@@ -124,7 +124,7 @@ export default function SpeedCardsPage() {
       </div>
 
       {!store.isGameStarted ? (
-        <div className="text-center py-20 bg-secondary/5 rounded-[2rem] border border-border border-dashed">
+        <div className="text-center py-20 bg-secondary/5 rounded-4xl border border-border border-dashed">
           <button
             onClick={fetchWords}
             disabled={loading}

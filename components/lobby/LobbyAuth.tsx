@@ -1,12 +1,11 @@
 "use client";
 import { useState } from "react";
-import { useAliasStore } from "@/store/useAliasStore";
 import { supabase } from "@/lib/supabase";
 
 interface LobbyAuthProps {
   gameId: string;
   gameTitle: string;
-  store: any; // Using any for simplicity in this generic component
+  store: any;
 }
 
 export const LobbyAuth = ({ gameId, gameTitle, store }: LobbyAuthProps) => {
@@ -62,7 +61,7 @@ export const LobbyAuth = ({ gameId, gameTitle, store }: LobbyAuthProps) => {
   return (
     <div className="flex items-center justify-center p-4 py-12">
       <div className="w-full max-w-md backdrop-blur-xl bg-secondary/10 border border-border shadow-2xl shadow-black/40 rounded-[2.5rem] p-10 text-center">
-        <h1 className="text-3xl font-black text-primary mb-2 tracking-[0.1em] uppercase italic drop-shadow-[0_1px_1px_rgba(0,0,0,0.4)]">
+        <h1 className="text-3xl font-black text-primary mb-2 tracking-widest uppercase italic drop-shadow-[0_1px_1px_rgba(0,0,0,0.4)]">
           {gameTitle}
         </h1>
         <p className="text-primary/60 mb-10 text-sm tracking-widest uppercase">CatherineGames Platform</p>

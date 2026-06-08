@@ -14,7 +14,7 @@ export const WaitingRoom = ({ pushUpdate }: WaitingRoomProps) => {
   return (
     <div className="flex items-center justify-center p-4 py-12">
       <div className="w-full max-w-md backdrop-blur-xl bg-secondary/10 border border-border shadow-2xl shadow-black/40 rounded-[2.5rem] p-10 text-center">
-        <h1 className="text-3xl font-black text-primary mb-2 tracking-[0.1em] uppercase italic drop-shadow-[0_1px_1px_rgba(0,0,0,0.4)]">
+        <h1 className="text-3xl font-black text-primary mb-2 tracking-widest uppercase italic drop-shadow-[0_1px_1px_rgba(0,0,0,0.4)]">
           Room: {store.roomCode}
         </h1>
         <p className="text-primary/60 mb-10 text-sm tracking-widest uppercase">Waiting for Players</p>

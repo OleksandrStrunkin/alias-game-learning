@@ -18,7 +18,7 @@ export const WordCard = ({
   onShowHint,
 }: WordCardProps) => {
   return (
-    <div className="flex-1 flex flex-col items-center justify-center text-center px-4 min-h-[220px] lg:min-h-[350px] relative">
+    <div className="flex-1 flex flex-col items-center justify-center text-center px-4 min-h-55 lg:min-h-87.5 relative">
       {isPaused ? (
         <div className="text-2xl uppercase tracking-[0.5em] text-muted-foreground/60 font-black italic animate-in fade-in duration-300">
           Paused
@@ -32,13 +32,13 @@ export const WordCard = ({
           <span className="text-lg uppercase font-black tracking-[0.4em] text-primary block h-7 mb-3">
             {currentWord?.category || " "}
           </span>
-          <div className="min-h-[100px] flex items-center justify-center max-w-[280px] lg:max-w-none">
+          <div className="min-h-25 flex items-center justify-center max-w-70 lg:max-w-none">
             <h2 className="text-4xl lg:text-6xl font-black uppercase italic tracking-tighter leading-tight text-foreground drop-shadow-[0_2px_6px_rgba(0,0,0,0.5)]">
               {currentWord?.word}
             </h2>
           </div>
 
-          <div className="h-[60px] mt-4 flex items-center justify-center">
+          <div className="h-15 mt-4 flex items-center justify-center">
             {currentWord?.hint ? (
               !showHint ? (
                 <button
