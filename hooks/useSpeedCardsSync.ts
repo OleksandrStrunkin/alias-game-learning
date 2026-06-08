@@ -8,15 +8,20 @@ export const useSpeedCardsSync = () => {
   const pushUpdate = useCallback(
     async (manualState?: any) => {
       if (!store.roomCode) return;
-      const stateToPush = manualState || useSpeedCardsStore.getState();
-      const pureData = JSON.parse(JSON.stringify(stateToPush));
-      delete pureData.myPlayerId;
-      delete pureData.roomCode;
+      try {
+        const stateToPush = manualState || useSpeedCardsStore.getState();
+        const pureData = JSON.parse(JSON.stringify(stateToPush));
+        
+        delete pureData.myPlayerId;
+        delete pureData.roomCode;
 
-      await supabase
-        .from("lobbies")
-        .update({ game_state: pureData })
-        .eq("code", store.roomCode);
+        await supabase
+          .from("lobbies")
+          .update({ game_state: pureData })
+          .eq("code", store.roomCode);
+      } catch (err) {
+        console.error("SpeedCardsSync error pushing update:", err);
+      }
     },
     [store.roomCode],
   );
@@ -35,7 +40,7 @@ export const useSpeedCardsSync = () => {
           filter: `code=eq.${store.roomCode}`,
         },
         (payload) => {
-          if (payload.new.game_state) {
+          if (payload.new && payload.new.game_state) {
             store.syncFromSupabase(payload.new.game_state);
           }
         },
@@ -45,7 +50,9 @@ export const useSpeedCardsSync = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [store.roomCode]);
+  }, [store.roomCode, store.syncFromSupabase]);
 
   return { pushUpdate };
 };
+
+
