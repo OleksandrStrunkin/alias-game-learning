@@ -6,6 +6,7 @@ import { SpeedCardsSetup } from "@/components/game/speed-cards/SpeedCardsSetup";
 import { useSpeedCardsSync } from "@/hooks/useSpeedCardsSync";
 import { SpeedCardsWaitingRoom } from "@/components/game/speed-cards/SpeedCardsWaitingRoom";
 import { SpeedCardsGameBoard } from "@/components/game/speed-cards/SpeedCardsGameBoard";
+import { SpeedCardsHeader } from "@/components/game/speed-cards/SpeedCardsHeader";
 
 export default function SpeedCardsPage() {
   const store = useSpeedCardsStore();
@@ -27,8 +28,9 @@ export default function SpeedCardsPage() {
   useEffect(() => {
     if (store.failedPair) {
       // Only the active player (or local player in solo) controls the timer to trigger the turn switch
-      const isActivePlayer = store.gameMode === "solo" || store.activePlayerId === store.myPlayerId;
-      
+      const isActivePlayer =
+        store.gameMode === "solo" || store.activePlayerId === store.myPlayerId;
+
       const timer = setTimeout(async () => {
         if (isActivePlayer) {
           store.clearFailedPair();
@@ -40,7 +42,13 @@ export default function SpeedCardsPage() {
 
       return () => clearTimeout(timer);
     }
-  }, [store.failedPair, store.activePlayerId, store.myPlayerId, store.gameMode, pushUpdate]);
+  }, [
+    store.failedPair,
+    store.activePlayerId,
+    store.myPlayerId,
+    store.gameMode,
+    pushUpdate,
+  ]);
 
   // Fetch words and start the game
   const fetchWords = useCallback(async () => {
@@ -71,9 +79,9 @@ export default function SpeedCardsPage() {
     setError(null);
     const code = Math.random().toString(36).substring(2, 6).toUpperCase();
     const myId = localStorage.getItem("alias_player_id") || "p_host";
-    
+
     const initialPlayers = {
-      [myId]: { id: myId, name: "Player 1", matches: 0, total: 0 }
+      [myId]: { id: myId, name: "Player 1", matches: 0, total: 0 },
     };
 
     const initialGameState = {
@@ -84,17 +92,17 @@ export default function SpeedCardsPage() {
       failedPair: null,
       winnerId: null,
       selectedCardId: null,
-      gameMode: "duel"
+      gameMode: "duel",
     };
-    
-    const { error: supabaseError } = await supabase
-      .from("lobbies")
-      .insert([{ 
-        code, 
+
+    const { error: supabaseError } = await supabase.from("lobbies").insert([
+      {
+        code,
         game_state: initialGameState,
-        game_type: "speed-cards" 
-      }]);
-    
+        game_type: "speed-cards",
+      },
+    ]);
+
     if (!supabaseError) {
       store.syncFromSupabase(initialGameState);
       store.setRoomCode(code);
@@ -123,13 +131,13 @@ export default function SpeedCardsPage() {
 
     const updatedPlayers = {
       ...existingPlayers,
-      [myId]: { id: myId, name: "Player 2", matches: 0, total: 0 }
+      [myId]: { id: myId, name: "Player 2", matches: 0, total: 0 },
     };
 
     const updatedGameState = {
       ...currentGameState,
       players: updatedPlayers,
-      gameMode: "duel"
+      gameMode: "duel",
     };
 
     const { error: updateError } = await supabase
@@ -160,7 +168,7 @@ export default function SpeedCardsPage() {
 
   if (!store.gameMode && !store.roomCode) {
     return (
-      <SpeedCardsSetup 
+      <SpeedCardsSetup
         onCreateDuel={handleCreateDuel}
         onJoinDuel={handleJoinDuel}
         onStartSolo={handleStartSolo}
@@ -171,7 +179,8 @@ export default function SpeedCardsPage() {
   // Check if current user is the host/creator (the first player in the lobby)
   const playerIds = Object.keys(store.players);
   const isHost = playerIds.length > 0 && playerIds[0] === store.myPlayerId;
-  const isMyTurn = store.gameMode === "solo" || store.activePlayerId === store.myPlayerId;
+  const isMyTurn =
+    store.gameMode === "solo" || store.activePlayerId === store.myPlayerId;
 
   return (
     <div className="max-w-4xl mx-auto p-6 text-primary">
@@ -181,28 +190,11 @@ export default function SpeedCardsPage() {
         </div>
       )}
 
-      {/* Header */}
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-3xl font-bold italic uppercase tracking-tighter">Speed Cards</h1>
-          <p className="text-[10px] text-primary/40 font-bold uppercase tracking-widest">
-            Mode: {store.gameMode === "solo" ? "👤 Solo" : "⚔️ Duel"}
-          </p>
-        </div>
-        <div className="flex items-center gap-4">
-          <button 
-            onClick={() => store.resetGame()}
-            className="text-xs uppercase font-bold border border-primary/20 px-3 py-1 rounded-lg hover:bg-primary/10 transition-colors"
-          >
-            Quit 🚪
-          </button>
-          {store.roomCode && (
-            <div className="text-sm font-mono bg-primary/10 px-3 py-1 rounded-full border border-primary/20">
-              Room: {store.roomCode}
-            </div>
-          )}
-        </div>
-      </div>
+      <SpeedCardsHeader
+        gameMode={store.gameMode}
+        roomCode={store.roomCode}
+        onQuit={() => store.resetGame()}
+      />
 
       {/* Lobby waiting room or Active Game screen */}
       {!store.isGameStarted ? (
@@ -226,4 +218,3 @@ export default function SpeedCardsPage() {
     </div>
   );
 }
-
