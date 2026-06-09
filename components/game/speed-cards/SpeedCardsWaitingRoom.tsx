@@ -1,5 +1,7 @@
+import type { SpeedCardsState } from "@/store/useSpeedCardsStore";
+
 interface SpeedCardsWaitingRoomProps {
-  store: any;
+  store: SpeedCardsState;
   playerIds: string[];
   isHost: boolean;
   loading: boolean;
