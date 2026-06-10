@@ -8,7 +8,11 @@ interface LobbyAuthProps {
   store: any;
 }
 
-export const LobbyAuth = ({ gameId, gameTitle, store }: LobbyAuthProps) => {
+export const AliasLobbyAuth = ({
+  gameId,
+  gameTitle,
+  store,
+}: LobbyAuthProps) => {
   const [inputCode, setInputCode] = useState("");
   const [error, setError] = useState<string | null>(null);
 
@@ -19,14 +23,14 @@ export const LobbyAuth = ({ gameId, gameTitle, store }: LobbyAuthProps) => {
     delete pureData.myPlayerId;
     delete pureData.roomCode;
 
-    const { error: supabaseError } = await supabase
-      .from("lobbies")
-      .insert([{ 
-        code, 
+    const { error: supabaseError } = await supabase.from("lobbies").insert([
+      {
+        code,
         game_state: pureData,
-        game_type: gameId 
-      }]);
-    
+        game_type: gameId,
+      },
+    ]);
+
     if (!supabaseError) {
       store.setRoomCode(code);
     } else {
@@ -64,7 +68,9 @@ export const LobbyAuth = ({ gameId, gameTitle, store }: LobbyAuthProps) => {
         <h1 className="text-3xl font-black text-primary mb-2 tracking-widest uppercase italic drop-shadow-[0_1px_1px_rgba(0,0,0,0.4)]">
           {gameTitle}
         </h1>
-        <p className="text-primary/60 mb-10 text-sm tracking-widest uppercase">CatherineGames Platform</p>
+        <p className="text-primary/60 mb-10 text-sm tracking-widest uppercase">
+          CatherineGames Platform
+        </p>
 
         {error && (
           <div className="mb-6 p-3 bg-destructive/20 border border-destructive/50 rounded-xl text-destructive-foreground text-sm">

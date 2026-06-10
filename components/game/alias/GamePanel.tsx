@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 
 import { useAliasStore } from "@/store/useAliasStore";
-import { useAliasTimer } from "@/hooks/useAliasTimer";
+import { useAliasTimer } from "@/hooks/alias/useAliasTimer";
 
 import { GameControls } from "./GameControls";
 import { Timer } from "./Timer";

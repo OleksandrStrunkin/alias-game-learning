@@ -2,11 +2,11 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 
-import { useAliasSync } from "@/hooks/useAliasSync";
+import { useAliasSync } from "@/hooks/alias/useAliasSync";
 
 import { useAliasStore } from "@/store/useAliasStore";
-import { LobbyAuth } from "@/components/lobby/LobbyAuth";
-import { WaitingRoom } from "@/components/lobby/WaitingRoom";
+import { AliasLobbyAuth } from "@/components/game/alias/lobby/AliasLobbyAuth";
+import { AliasWaitingRoom } from "@/components/game/alias/lobby/AliasWaitingRoom";
 import { GameDashboard } from "@/components/game/alias/GameDashboard";
 
 export default function AliasPage() {
@@ -52,14 +52,16 @@ export default function AliasPage() {
 
   if (!store.roomCode) {
     return (
-      <LobbyAuth gameId="alias" gameTitle="Catherine Alias" store={store} />
+      <AliasLobbyAuth
+        gameId="alias"
+        gameTitle="Catherine Alias"
+        store={store}
+      />
     );
   }
 
   if (store.teams.length < 2) {
-    return ( 
-      <WaitingRoom pushUpdate={pushUpdate} />
-    );
+    return <AliasWaitingRoom pushUpdate={pushUpdate} />;
   }
 
   return (

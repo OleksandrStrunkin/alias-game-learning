@@ -6,7 +6,7 @@ interface WaitingRoomProps {
   pushUpdate: (state: any) => Promise<void>;
 }
 
-export const WaitingRoom = ({ pushUpdate }: WaitingRoomProps) => {
+export const AliasWaitingRoom = ({ pushUpdate }: WaitingRoomProps) => {
   const store = useAliasStore();
   const [tempName, setTempName] = useState("");
   const iHaveTeam = store.teams.some((t) => t.playerId === store.myPlayerId);
@@ -17,7 +17,9 @@ export const WaitingRoom = ({ pushUpdate }: WaitingRoomProps) => {
         <h1 className="text-3xl font-black text-primary mb-2 tracking-widest uppercase italic drop-shadow-[0_1px_1px_rgba(0,0,0,0.4)]">
           Room: {store.roomCode}
         </h1>
-        <p className="text-primary/60 mb-10 text-sm tracking-widest uppercase">Waiting for Players</p>
+        <p className="text-primary/60 mb-10 text-sm tracking-widest uppercase">
+          Waiting for Players
+        </p>
 
         <div className="bg-secondary/20 border border-border/50 p-6 rounded-3xl mb-8 shadow-inner">
           <h3 className="text-primary/50 text-[10px] font-black uppercase tracking-[0.2em] mb-4">
