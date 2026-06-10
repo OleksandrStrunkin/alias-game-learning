@@ -53,6 +53,18 @@ export const useSpeedCardsGame = ({
 
       store.initGame(words.slice(0, 10));
       if (store.gameMode === "duel") {
+        // Start turn timer for duel mode
+        const state = useSpeedCardsStore.getState();
+        const playerIds = Object.keys(state.players);
+        const activeId =
+          state.activePlayerId ||
+          (playerIds.length > 0 ? playerIds[0] : state.myPlayerId);
+        store.setActivePlayer(activeId || null);
+        if (state.turnTime) {
+          const now = Date.now();
+          store.setTurnStartedAt(now);
+        }
+
         await pushUpdate(useSpeedCardsStore.getState());
       }
     } catch (err) {

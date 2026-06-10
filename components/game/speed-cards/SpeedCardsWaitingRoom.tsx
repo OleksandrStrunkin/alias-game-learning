@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSpeedCardsStore } from "@/store/useSpeedCardsStore";
 import type { SpeedCardsState } from "@/store/useSpeedCardsStore";
 
 interface SpeedCardsWaitingRoomProps {
@@ -25,6 +26,8 @@ export const SpeedCardsWaitingRoom = ({
     : undefined;
   const [playerName, setPlayerName] = useState(currentPlayer?.name || "");
   const categories = ["A2", "B1", "B2"];
+  const turnTime = useSpeedCardsStore((s) => s.turnTime);
+  const setTurnTime = useSpeedCardsStore((s) => s.setTurnTime);
 
   const handleToggleCategory = async (category: string) => {
     store.toggleCategory(category);
@@ -74,6 +77,43 @@ export const SpeedCardsWaitingRoom = ({
                   </button>
                 );
               })}
+            </div>
+            <div className="mt-4">
+              <h3 className="text-primary/50 text-[10px] font-black uppercase tracking-[0.2em] mb-2">
+                Turn time
+              </h3>
+              <div className="flex flex-wrap justify-center gap-2">
+                {[10, 15, 20, 0].map((t) => {
+                  const isActive = t === 0 ? turnTime === null : turnTime === t;
+                  return isHost ? (
+                    <button
+                      key={t}
+                      onClick={async () => {
+                        setTurnTime(t === 0 ? null : t);
+                        if (store.roomCode) await pushUpdate();
+                      }}
+                      className={`px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all border ${
+                        isActive
+                          ? "bg-primary border-primary text-primary-foreground shadow-lg"
+                          : "bg-secondary/5 border-border text-primary/50 hover:bg-secondary/10"
+                      }`}
+                    >
+                      {t === 0 ? "No limit" : `${t}s`}
+                    </button>
+                  ) : (
+                    <div
+                      key={t}
+                      className={`px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest border ${
+                        isActive
+                          ? "bg-primary border-primary text-primary-foreground"
+                          : "bg-secondary/5 border-border text-primary/50"
+                      }`}
+                    >
+                      {t === 0 ? "No limit" : `${t}s`}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
           <div className="flex flex-col gap-6 max-w-xl mx-auto">

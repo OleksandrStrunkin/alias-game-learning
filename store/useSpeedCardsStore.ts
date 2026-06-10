@@ -24,6 +24,8 @@ export interface SpeedCardsState {
   roomCode: string | null;
   myPlayerId: string | null;
   selectedCategories: string[];
+  turnTime: number | null;
+  turnStartedAt: number | null;
   hostId: string | null;
   activePlayerId: string | null;
   gameMode: "solo" | "duel" | null;
@@ -34,6 +36,9 @@ export interface SpeedCardsState {
   setMyPlayerId: (id: string) => void;
   setHostId: (id: string | null) => void;
   setRoomCode: (code: string | null) => void;
+  setTurnTime: (seconds: number | null) => void;
+  setTurnStartedAt: (ts: number | null) => void;
+  setActivePlayer: (id: string | null) => void;
   toggleCategory: (category: string) => void;
   initGame: (words: any[], playerName?: string) => void;
   selectCard: (id: string) => void;
@@ -51,6 +56,8 @@ export const useSpeedCardsStore = create<SpeedCardsState>((set) => ({
   roomCode: null,
   myPlayerId: null,
   selectedCategories: ["A2", "B1"],
+  turnTime: null,
+  turnStartedAt: null,
   hostId: null,
   activePlayerId: null,
   gameMode: null,
@@ -60,6 +67,9 @@ export const useSpeedCardsStore = create<SpeedCardsState>((set) => ({
   setMyPlayerId: (id: string) => set({ myPlayerId: id }),
   setHostId: (id: string | null) => set({ hostId: id }),
   setRoomCode: (code: string | null) => set({ roomCode: code }),
+  setTurnTime: (seconds: number | null) => set({ turnTime: seconds }),
+  setTurnStartedAt: (ts: number | null) => set({ turnStartedAt: ts }),
+  setActivePlayer: (id: string | null) => set({ activePlayerId: id }),
   toggleCategory: (category: string) =>
     set((state) => {
       if (category === "API") {
@@ -154,6 +164,7 @@ export const useSpeedCardsStore = create<SpeedCardsState>((set) => ({
         activePlayerId,
         winnerId: null,
         hostId: state.gameMode === "duel" ? state.hostId || null : null,
+        turnStartedAt: state.turnStartedAt || null,
       };
     }),
 

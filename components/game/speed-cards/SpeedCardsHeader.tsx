@@ -14,6 +14,7 @@ export const SpeedCardsHeader = ({
   const selectedCategories = useSpeedCardsStore(
     (state) => state.selectedCategories,
   );
+  const turnTime = useSpeedCardsStore((state) => state.turnTime);
 
   return (
     <div className="flex justify-between items-center mb-8">
@@ -26,6 +27,9 @@ export const SpeedCardsHeader = ({
         </p>
         <p className="text-[10px] text-primary/50 uppercase tracking-wider mt-1">
           Criteria: {selectedCategories.join(", ")}
+        </p>
+        <p className="text-[10px] text-primary/50 uppercase tracking-wider mt-1">
+          Time: {turnTime ? `${turnTime}s` : "No limit"}
         </p>
       </div>
       <div className="flex items-center gap-4">

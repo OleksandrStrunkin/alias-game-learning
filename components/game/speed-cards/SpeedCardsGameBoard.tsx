@@ -5,8 +5,10 @@ interface SpeedCardsGameBoardProps {
   isMyTurn: boolean;
   isHost: boolean;
   loading: boolean;
+  timers?: Record<string, { remaining: number | null; percent: number | null }>;
   fetchWords: () => void;
   handleSelectCard: (cardId: string) => Promise<void> | void;
+  onSyncCategories?: () => Promise<void>;
 }
 
 export const SpeedCardsGameBoard = ({
@@ -14,6 +16,8 @@ export const SpeedCardsGameBoard = ({
   isMyTurn,
   isHost,
   loading,
+  timers,
+  onSyncCategories,
   fetchWords,
   handleSelectCard,
 }: SpeedCardsGameBoardProps) => {
@@ -21,6 +25,20 @@ export const SpeedCardsGameBoard = ({
     <>
       <div className="space-y-6 relative">
         {/* Turn Banner for Duel Mode */}
+        {store.turnTime !== null && (
+          <div className="flex items-center justify-center mb-2">
+            <div className="px-4 py-2 rounded-full bg-secondary/5 border border-border text-sm font-mono">
+              Turn time: {store.turnTime ? `${store.turnTime}s` : "No limit"}
+              {timers &&
+                store.activePlayerId &&
+                timers[store.activePlayerId] && (
+                  <span className="ml-3 font-black">
+                    {timers[store.activePlayerId].remaining}s
+                  </span>
+                )}
+            </div>
+          </div>
+        )}
 
         {/* In-game deck controls */}
         {store.cards.some((card) => !card.isMatched) && (
@@ -31,7 +49,10 @@ export const SpeedCardsGameBoard = ({
                 return (
                   <button
                     key={category}
-                    onClick={() => store.toggleCategory(category)}
+                    onClick={async () => {
+                      store.toggleCategory(category);
+                      if (onSyncCategories) await onSyncCategories();
+                    }}
                     className={`px-3 py-1 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all border ${
                       active
                         ? "bg-primary border-primary text-primary-foreground shadow-lg"
@@ -89,31 +110,58 @@ export const SpeedCardsGameBoard = ({
 
         {/* Progress / Scores */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {Object.values(store.players).map((player) => (
-            <div
-              key={player.id}
-              className="bg-secondary/5 p-4 rounded-2xl border border-border"
-            >
-              <div className="flex justify-between text-xs mb-2 uppercase font-bold tracking-widest">
-                <span>
-                  {player.id === store.myPlayerId
-                    ? `${player.name} (You)`
-                    : player.name}
-                </span>
-                <span>
-                  {player.matches} / {player.total} pairs
-                </span>
+          {Object.values(store.players).map((player) => {
+            const t = timers ? timers[player.id] : undefined;
+            const isActive = player.id === store.activePlayerId;
+            return (
+              <div
+                key={player.id}
+                className={`p-4 rounded-2xl border transition-all ${
+                  isActive
+                    ? "border-primary/70 bg-primary/10 shadow-[0_0_0_1px_rgba(56,189,248,0.3)]"
+                    : "border-border bg-secondary/5"
+                }`}
+              >
+                <div className="flex flex-col gap-3 text-xs mb-3 uppercase font-bold tracking-widest">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold">
+                        {player.id === store.myPlayerId
+                          ? `${player.name} (You)`
+                          : player.name}
+                      </span>
+                      {isActive && (
+                        <span className="rounded-full bg-primary/20 text-primary px-2 py-0.5 text-[10px] uppercase font-black">
+                          Active
+                        </span>
+                      )}
+                    </div>
+                    <span className="text-[11px] font-mono text-primary/70">
+                      {player.matches} / {player.total}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between gap-3 text-[11px] text-primary/70">
+                    <span>Timer</span>
+                    <span className="font-black text-primary">
+                      {t && t.remaining !== null ? `${t.remaining}s` : "--"}
+                    </span>
+                  </div>
+                </div>
+                <div className="h-3 bg-black/10 rounded-full overflow-hidden border border-border shadow-inner">
+                  <div
+                    className={`h-full ${
+                      isActive
+                        ? "bg-linear-to-r from-cyan-500 via-sky-400 to-blue-500"
+                        : "bg-secondary/30"
+                    } transition-all duration-200`}
+                    style={{
+                      width: `${t && t.percent ? t.percent : 0}%`,
+                    }}
+                  />
+                </div>
               </div>
-              <div className="h-3 bg-black/40 rounded-full overflow-hidden border border-border shadow-inner">
-                <div
-                  className="h-full bg-primary transition-all duration-500 shadow-primary/50"
-                  style={{
-                    width: `${(player.matches / (player.total || 5)) * 100}%`,
-                  }}
-                />
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Cards Grid */}
@@ -128,7 +176,7 @@ export const SpeedCardsGameBoard = ({
                   key={card.id}
                   onClick={() => !card.isMatched && handleSelectCard(card.id)}
                   disabled={card.isMatched || !isMyTurn || !!store.failedPair}
-                  className={`h-32 p-4 rounded-2xl border-2 transition-all flex items-center justify-center text-center font-bold text-sm leading-tight
+                  className={`h-32 p-2 rounded-2xl border-2 transition-all flex items-center justify-center text-center font-bold text-xl leading-tight
                     ${
                       card.isMatched
                         ? "opacity-0 scale-90 pointer-events-none"
@@ -205,7 +253,10 @@ export const SpeedCardsGameBoard = ({
                       return (
                         <button
                           key={category}
-                          onClick={() => store.toggleCategory(category)}
+                          onClick={async () => {
+                            store.toggleCategory(category);
+                            if (onSyncCategories) await onSyncCategories();
+                          }}
                           className={`px-3 py-1 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all border ${
                             active
                               ? "bg-primary border-primary text-primary-foreground shadow-lg"
@@ -213,6 +264,33 @@ export const SpeedCardsGameBoard = ({
                           }`}
                         >
                           {category}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <div className="text-xs uppercase tracking-widest text-primary/60">
+                    Choose turn time for next round
+                  </div>
+                  <div className="flex justify-center gap-2">
+                    {[10, 15, 20, 0].map((t) => {
+                      const active =
+                        t === 0
+                          ? store.turnTime === null
+                          : store.turnTime === t;
+                      return (
+                        <button
+                          key={t}
+                          onClick={async () => {
+                            store.setTurnTime(t === 0 ? null : t);
+                            if (onSyncCategories) await onSyncCategories();
+                          }}
+                          className={`px-3 py-1 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all border ${
+                            active
+                              ? "bg-primary border-primary text-primary-foreground shadow-lg"
+                              : "bg-secondary/5 border-border text-primary/50 hover:bg-secondary/10"
+                          }`}
+                        >
+                          {t === 0 ? "No limit" : `${t}s`}
                         </button>
                       );
                     })}

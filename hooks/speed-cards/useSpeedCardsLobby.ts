@@ -36,6 +36,8 @@ export const useSpeedCardsLobby = ({
       selectedCardId: null,
       gameMode: "duel",
       hostId: myId,
+      turnTime: store.turnTime || null,
+      turnStartedAt: null,
       selectedCategories: store.selectedCategories,
     };
 

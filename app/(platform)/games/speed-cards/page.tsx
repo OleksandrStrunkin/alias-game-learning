@@ -9,6 +9,7 @@ import { SpeedCardsGameBoard } from "@/components/game/speed-cards/SpeedCardsGam
 import { SpeedCardsHeader } from "@/components/game/speed-cards/SpeedCardsHeader";
 import { useSpeedCardsPlayer } from "@/hooks/speed-cards/useSpeedCardsPlayer";
 import { useSpeedCardsFailedPairTimer } from "@/hooks/speed-cards/useSpeedCardsFailedPairTimer";
+import { useSpeedCardsTimer } from "@/hooks/speed-cards/useSpeedCardsTimer";
 import { useSpeedCardsGame } from "@/hooks/speed-cards/useSpeedCardsGame";
 import { useSpeedCardsLobby } from "@/hooks/speed-cards/useSpeedCardsLobby";
 
@@ -26,6 +27,7 @@ export default function SpeedCardsPage() {
 
   useSpeedCardsPlayer();
   useSpeedCardsFailedPairTimer(pushUpdate);
+  const { timers } = useSpeedCardsTimer(pushUpdate);
 
   const { fetchWords, handleSelectCard, handleStartSolo } = useSpeedCardsGame({
     setLoading,
@@ -121,7 +123,9 @@ export default function SpeedCardsPage() {
           isMyTurn={isMyTurn}
           isHost={isHost}
           loading={loading}
+          timers={timers}
           fetchWords={fetchWords}
+          onSyncCategories={updateRoomState}
           handleSelectCard={handleSelectCard}
         />
       )}
