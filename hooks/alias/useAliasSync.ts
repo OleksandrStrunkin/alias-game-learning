@@ -20,6 +20,14 @@ export const useAliasSync = () => {
     [store.roomCode],
   );
 
+  const leaveLobby = useCallback(async () => {
+    if (!store.roomCode) return;
+
+    await supabase.from("lobbies").delete().eq("code", store.roomCode);
+    store.resetGame();
+    localStorage.removeItem("alias_room_code");
+  }, [store.roomCode, store.resetGame]);
+
   useEffect(() => {
     if (!store.roomCode) return;
 
@@ -39,6 +47,19 @@ export const useAliasSync = () => {
           }
         },
       )
+      .on(
+        "postgres_changes",
+        {
+          event: "DELETE",
+          schema: "public",
+          table: "lobbies",
+          filter: `code=eq.${store.roomCode}`,
+        },
+        () => {
+          store.resetGame();
+          localStorage.removeItem("alias_room_code");
+        },
+      )
       .subscribe();
 
     return () => {
@@ -46,5 +67,5 @@ export const useAliasSync = () => {
     };
   }, [store.roomCode, store.syncFromSupabase]);
 
-  return { pushUpdate };
+  return { pushUpdate, leaveLobby };
 };

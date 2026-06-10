@@ -7,12 +7,14 @@ interface GameDashboardProps {
   fetchWord: () => Promise<void>;
   loading: boolean;
   pushUpdate: (state: any) => Promise<void>;
+  leaveLobby: () => Promise<void>;
 }
 
 export const GameDashboard = ({
   fetchWord,
   loading,
   pushUpdate,
+  leaveLobby,
 }: GameDashboardProps) => {
   const store = useAliasStore();
 
@@ -38,7 +40,10 @@ export const GameDashboard = ({
                     key={cat}
                     onClick={() => {
                       store.toggleCategory(cat);
-                      setTimeout(() => pushUpdate(useAliasStore.getState()), 50);
+                      setTimeout(
+                        () => pushUpdate(useAliasStore.getState()),
+                        50,
+                      );
                     }}
                     className={`px-3 py-1.5 rounded-lg text-[10px] font-black transition-all border ${
                       isActive
@@ -63,9 +68,8 @@ export const GameDashboard = ({
               New Game
             </button>
             <button
-              onClick={() => {
-                store.resetGame();
-                pushUpdate(useAliasStore.getState());
+              onClick={async () => {
+                await leaveLobby();
               }}
               className="p-3 rounded-xl bg-destructive/10 text-destructive/50 hover:bg-destructive/20 hover:text-destructive-foreground transition-all"
             >

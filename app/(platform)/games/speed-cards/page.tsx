@@ -1,6 +1,7 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSpeedCardsStore } from "@/store/useSpeedCardsStore";
+import { supabase } from "@/lib/supabase";
 import { SpeedCardsSetup } from "@/components/game/speed-cards/SpeedCardsSetup";
 import { useSpeedCardsSync } from "@/hooks/speed-cards/useSpeedCardsSync";
 import { SpeedCardsWaitingRoom } from "@/components/game/speed-cards/SpeedCardsWaitingRoom";
@@ -13,7 +14,13 @@ import { useSpeedCardsLobby } from "@/hooks/speed-cards/useSpeedCardsLobby";
 
 export default function SpeedCardsPage() {
   const store = useSpeedCardsStore();
-  const { pushUpdate } = useSpeedCardsSync();
+  const setRoomCode = useSpeedCardsStore((state) => state.setRoomCode);
+  const syncFromSupabase = useSpeedCardsStore(
+    (state) => state.syncFromSupabase,
+  );
+  const setGameMode = useSpeedCardsStore((state) => state.setGameMode);
+
+  const { pushUpdate, leaveLobby } = useSpeedCardsSync();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -35,6 +42,36 @@ export default function SpeedCardsPage() {
     setError,
     pushUpdate,
   });
+
+  useEffect(() => {
+    const savedRoom = localStorage.getItem("speed_cards_room_code");
+    if (!savedRoom || store.roomCode) return;
+
+    const restoreRoom = async () => {
+      const { data, error } = await supabase
+        .from("lobbies")
+        .select("game_state, game_type")
+        .eq("code", savedRoom)
+        .single();
+
+      if (
+        !error &&
+        data &&
+        data.game_state &&
+        data.game_type === "speed-cards"
+      ) {
+        syncFromSupabase(data.game_state);
+        setRoomCode(savedRoom);
+        if (data.game_state.gameMode === "duel") {
+          setGameMode("duel");
+        }
+      } else {
+        localStorage.removeItem("speed_cards_room_code");
+      }
+    };
+
+    restoreRoom();
+  }, [store.roomCode, setGameMode, setRoomCode, syncFromSupabase]);
 
   if (!store.gameMode && !store.roomCode) {
     return (
@@ -64,7 +101,7 @@ export default function SpeedCardsPage() {
       <SpeedCardsHeader
         gameMode={store.gameMode}
         roomCode={store.roomCode}
-        onQuit={() => store.resetGame()}
+        onQuit={leaveLobby}
       />
 
       {/* Lobby waiting room or Active Game screen */}

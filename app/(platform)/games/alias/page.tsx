@@ -11,8 +11,12 @@ import { GameDashboard } from "@/components/game/alias/GameDashboard";
 
 export default function AliasPage() {
   const store = useAliasStore();
+  const roomCode = useAliasStore((state) => state.roomCode);
+  const syncFromSupabase = useAliasStore((state) => state.syncFromSupabase);
+  const setRoomCode = useAliasStore((state) => state.setRoomCode);
+  const setMyPlayerId = useAliasStore((state) => state.setMyPlayerId);
 
-  const { pushUpdate } = useAliasSync();
+  const { pushUpdate, leaveLobby } = useAliasSync();
 
   const [loading, setLoading] = useState(false);
 
@@ -22,8 +26,30 @@ export default function AliasPage() {
       id = "p_" + Math.random().toString(36).substring(2, 9);
       localStorage.setItem("alias_player_id", id);
     }
-    store.setMyPlayerId(id);
-  }, []);
+    setMyPlayerId(id);
+  }, [setMyPlayerId]);
+
+  useEffect(() => {
+    const savedRoom = localStorage.getItem("alias_room_code");
+    if (!savedRoom || roomCode) return;
+
+    const restoreRoom = async () => {
+      const { data, error } = await supabase
+        .from("lobbies")
+        .select("game_state, game_type")
+        .eq("code", savedRoom)
+        .single();
+
+      if (!error && data && data.game_state && data.game_type === "alias") {
+        syncFromSupabase(data.game_state);
+        setRoomCode(savedRoom);
+      } else {
+        localStorage.removeItem("alias_room_code");
+      }
+    };
+
+    restoreRoom();
+  }, [roomCode, setRoomCode, syncFromSupabase]);
 
   const fetchWord = useCallback(async () => {
     setLoading(true);
@@ -69,6 +95,7 @@ export default function AliasPage() {
       fetchWord={fetchWord}
       loading={loading}
       pushUpdate={pushUpdate}
+      leaveLobby={leaveLobby}
     />
   );
 }

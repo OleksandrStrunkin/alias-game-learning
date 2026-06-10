@@ -11,7 +11,7 @@ export const useSpeedCardsSync = () => {
       try {
         const stateToPush = manualState || useSpeedCardsStore.getState();
         const pureData = JSON.parse(JSON.stringify(stateToPush));
-        
+
         delete pureData.myPlayerId;
         delete pureData.roomCode;
 
@@ -25,6 +25,19 @@ export const useSpeedCardsSync = () => {
     },
     [store.roomCode],
   );
+
+  const leaveLobby = useCallback(async () => {
+    if (!store.roomCode) return;
+
+    try {
+      await supabase.from("lobbies").delete().eq("code", store.roomCode);
+    } catch (err) {
+      console.error("SpeedCardsSync error deleting lobby:", err);
+    }
+
+    store.resetGame();
+    localStorage.removeItem("speed_cards_room_code");
+  }, [store.roomCode, store.resetGame]);
 
   useEffect(() => {
     if (!store.roomCode) return;
@@ -45,14 +58,25 @@ export const useSpeedCardsSync = () => {
           }
         },
       )
+      .on(
+        "postgres_changes",
+        {
+          event: "DELETE",
+          schema: "public",
+          table: "lobbies",
+          filter: `code=eq.${store.roomCode}`,
+        },
+        () => {
+          store.resetGame();
+          localStorage.removeItem("speed_cards_room_code");
+        },
+      )
       .subscribe();
 
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [store.roomCode, store.syncFromSupabase]);
+  }, [store.roomCode, store.syncFromSupabase, store.resetGame]);
 
-  return { pushUpdate };
+  return { pushUpdate, leaveLobby };
 };
-
-

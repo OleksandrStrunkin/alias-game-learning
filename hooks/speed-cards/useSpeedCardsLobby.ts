@@ -12,7 +12,6 @@ export const useSpeedCardsLobby = ({
   pushUpdate,
 }: UseSpeedCardsLobbyOptions) => {
   const store = useSpeedCardsStore();
-
   const handleCreateDuel = useCallback(async () => {
     setError(null);
     const code = Math.random().toString(36).substring(2, 6).toUpperCase();
@@ -40,6 +39,15 @@ export const useSpeedCardsLobby = ({
       selectedCategories: store.selectedCategories,
     };
 
+    const threeHoursAgo = new Date(
+      Date.now() - 3 * 60 * 60 * 1000,
+    ).toISOString();
+    await supabase
+      .from("lobbies")
+      .delete()
+      .lt("created_at", threeHoursAgo)
+      .eq("game_type", "speed-cards");
+
     const { error: supabaseError } = await supabase.from("lobbies").insert([
       {
         code,
@@ -53,10 +61,11 @@ export const useSpeedCardsLobby = ({
       store.setHostId(myId);
       store.setRoomCode(code);
       store.setGameMode("duel");
+      localStorage.setItem("speed_cards_room_code", code);
     } else {
       setError("Failed to create room");
     }
-  }, [pushUpdate, setError, store]);
+  }, [setError, store]);
 
   const handleOpenJoinRoom = useCallback(
     async (code: string) => {
@@ -76,6 +85,7 @@ export const useSpeedCardsLobby = ({
       store.syncFromSupabase(currentGameState);
       store.setRoomCode(code);
       store.setGameMode("duel");
+      localStorage.setItem("speed_cards_room_code", code);
     },
     [setError, store],
   );

@@ -23,6 +23,15 @@ export const AliasLobbyAuth = ({
     delete pureData.myPlayerId;
     delete pureData.roomCode;
 
+    const threeHoursAgo = new Date(
+      Date.now() - 3 * 60 * 60 * 1000,
+    ).toISOString();
+    await supabase
+      .from("lobbies")
+      .delete()
+      .lt("created_at", threeHoursAgo)
+      .eq("game_type", gameId);
+
     const { error: supabaseError } = await supabase.from("lobbies").insert([
       {
         code,
@@ -33,6 +42,7 @@ export const AliasLobbyAuth = ({
 
     if (!supabaseError) {
       store.setRoomCode(code);
+      localStorage.setItem("alias_room_code", code);
     } else {
       setError("Failed to create lobby");
     }
@@ -59,6 +69,7 @@ export const AliasLobbyAuth = ({
     if (data.game_state) {
       store.syncFromSupabase(data.game_state);
       store.setRoomCode(inputCode);
+      localStorage.setItem("alias_room_code", inputCode);
     }
   };
 
