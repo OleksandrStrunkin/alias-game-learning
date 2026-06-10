@@ -23,6 +23,8 @@ export interface SpeedCardsState {
   isGameStarted: boolean;
   roomCode: string | null;
   myPlayerId: string | null;
+  selectedCategories: string[];
+  hostId: string | null;
   activePlayerId: string | null;
   gameMode: "solo" | "duel" | null;
   winnerId: string | null;
@@ -30,8 +32,10 @@ export interface SpeedCardsState {
   // Actions
   setGameMode: (mode: "solo" | "duel" | null) => void;
   setMyPlayerId: (id: string) => void;
+  setHostId: (id: string | null) => void;
   setRoomCode: (code: string | null) => void;
-  initGame: (words: any[]) => void;
+  toggleCategory: (category: string) => void;
+  initGame: (words: any[], playerName?: string) => void;
   selectCard: (id: string) => void;
   clearFailedPair: () => void;
   syncFromSupabase: (newState: any) => void;
@@ -46,13 +50,33 @@ export const useSpeedCardsStore = create<SpeedCardsState>((set) => ({
   isGameStarted: false,
   roomCode: null,
   myPlayerId: null,
+  selectedCategories: ["A2", "B1"],
+  hostId: null,
   activePlayerId: null,
   gameMode: null,
   winnerId: null,
 
-  setGameMode: (mode) => set({ gameMode: mode }),
-  setMyPlayerId: (id) => set({ myPlayerId: id }),
-  setRoomCode: (code) => set({ roomCode: code }),
+  setGameMode: (mode: "solo" | "duel" | null) => set({ gameMode: mode }),
+  setMyPlayerId: (id: string) => set({ myPlayerId: id }),
+  setHostId: (id: string | null) => set({ hostId: id }),
+  setRoomCode: (code: string | null) => set({ roomCode: code }),
+  toggleCategory: (category: string) =>
+    set((state) => {
+      if (category === "API") {
+        return { selectedCategories: ["API"] };
+      }
+
+      let newCats = state.selectedCategories.filter((c) => c !== "API");
+      if (newCats.includes(category)) {
+        if (newCats.length > 1) {
+          newCats = newCats.filter((c) => c !== category);
+        }
+      } else {
+        newCats.push(category);
+      }
+
+      return { selectedCategories: newCats };
+    }),
 
   resetGame: () =>
     set({
@@ -62,12 +86,15 @@ export const useSpeedCardsStore = create<SpeedCardsState>((set) => ({
       players: {},
       isGameStarted: false,
       roomCode: null,
+      myPlayerId: null,
+      selectedCategories: ["A2", "B1"],
+      hostId: null,
       gameMode: null,
       activePlayerId: null,
       winnerId: null,
     }),
 
-  initGame: (words) =>
+  initGame: (words, playerName) =>
     set((state) => {
       const gameCards: Card[] = [];
       words.forEach((w, index) => {
@@ -101,11 +128,12 @@ export const useSpeedCardsStore = create<SpeedCardsState>((set) => ({
       });
 
       // If solo mode, set up a local player progress if not already done
-      const myId = state.myPlayerId || "local";
+      const myId =
+        state.myPlayerId || localStorage.getItem("alias_player_id") || "local";
       if (state.gameMode === "solo") {
         updatedPlayers[myId] = {
           id: myId,
-          name: "You",
+          name: playerName?.trim() || "You",
           matches: 0,
           total: words.length,
         };
@@ -113,7 +141,9 @@ export const useSpeedCardsStore = create<SpeedCardsState>((set) => ({
 
       const playerIds = Object.keys(updatedPlayers);
       const activePlayerId =
-        state.gameMode === "duel" && playerIds.length > 0 ? playerIds[0] : myId;
+        state.gameMode === "duel"
+          ? state.activePlayerId || (playerIds.length > 0 ? playerIds[0] : myId)
+          : myId;
 
       return {
         cards: shuffled,
@@ -123,6 +153,7 @@ export const useSpeedCardsStore = create<SpeedCardsState>((set) => ({
         players: updatedPlayers,
         activePlayerId,
         winnerId: null,
+        hostId: state.gameMode === "duel" ? state.hostId || null : null,
       };
     }),
 
@@ -248,5 +279,8 @@ export const useSpeedCardsStore = create<SpeedCardsState>((set) => ({
       ...newState,
       myPlayerId: state.myPlayerId,
       roomCode: state.roomCode,
+      hostId: newState.hostId ?? state.hostId ?? null,
+      selectedCategories: newState.selectedCategories ||
+        state.selectedCategories || ["A2", "B1"],
     })),
 }));

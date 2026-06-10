@@ -54,18 +54,42 @@ export default function SpeedCardsPage() {
   const fetchWords = useCallback(async () => {
     setLoading(true);
     try {
-      const { data } = await supabase
-        .from("words")
-        .select("word, hint")
-        .in("category", ["A2", "B1"])
-        .limit(30);
+      const categories = store.selectedCategories.length
+        ? store.selectedCategories
+        : ["A2", "B1"];
 
-      if (data) {
-        const shuffledWords = data.sort(() => Math.random() - 0.5).slice(0, 5);
-        store.initGame(shuffledWords);
-        if (store.gameMode === "duel") {
-          await pushUpdate(useSpeedCardsStore.getState());
+      const words: any[] = [];
+      const maxAttempts = 20;
+      let attempts = 0;
+
+      while (words.length < 10 && attempts < maxAttempts) {
+        const { data, error } = await supabase.rpc("get_random_word", {
+          categories,
+        });
+
+        if (error) {
+          throw error;
         }
+
+        const wordItem = data?.[0];
+        if (wordItem) {
+          const exists = words.some((item) => item.word === wordItem.word);
+          if (!exists) {
+            words.push(wordItem);
+          }
+        }
+
+        attempts += 1;
+      }
+
+      if (words.length === 0) {
+        setError("Failed to fetch words");
+        return;
+      }
+
+      store.initGame(words.slice(0, 10));
+      if (store.gameMode === "duel") {
+        await pushUpdate(useSpeedCardsStore.getState());
       }
     } catch (err) {
       console.error(err);
@@ -81,7 +105,12 @@ export default function SpeedCardsPage() {
     const myId = localStorage.getItem("alias_player_id") || "p_host";
 
     const initialPlayers = {
-      [myId]: { id: myId, name: "Player 1", matches: 0, total: 0 },
+      [myId]: {
+        id: myId,
+        name: "Player 1",
+        matches: 0,
+        total: 0,
+      },
     };
 
     const initialGameState = {
@@ -93,6 +122,8 @@ export default function SpeedCardsPage() {
       winnerId: null,
       selectedCardId: null,
       gameMode: "duel",
+      hostId: myId,
+      selectedCategories: store.selectedCategories,
     };
 
     const { error: supabaseError } = await supabase.from("lobbies").insert([
@@ -105,6 +136,7 @@ export default function SpeedCardsPage() {
 
     if (!supabaseError) {
       store.syncFromSupabase(initialGameState);
+      store.setHostId(myId);
       store.setRoomCode(code);
       store.setGameMode("duel");
     } else {
@@ -112,7 +144,7 @@ export default function SpeedCardsPage() {
     }
   };
 
-  const handleJoinDuel = async (code: string) => {
+  const handleOpenJoinRoom = async (code: string) => {
     setError(null);
     const { data, error: supabaseError } = await supabase
       .from("lobbies")
@@ -125,13 +157,86 @@ export default function SpeedCardsPage() {
       return;
     }
 
-    const myId = store.myPlayerId || "local";
     const currentGameState = data.game_state || {};
-    const existingPlayers = currentGameState.players || {};
+    store.syncFromSupabase(currentGameState);
+    store.setRoomCode(code);
+    store.setGameMode("duel");
+  };
+
+  const handleStartSolo = () => {
+    store.setGameMode("solo");
+    store.setRoomCode(null);
+    store.setHostId(null);
+    fetchWords();
+  };
+
+  const handleSelectCard = async (cardId: string) => {
+    store.selectCard(cardId);
+    if (store.gameMode === "duel") {
+      await pushUpdate(useSpeedCardsStore.getState());
+    }
+  };
+
+  const updateRoomState = useCallback(async () => {
+    if (store.roomCode) {
+      await pushUpdate(useSpeedCardsStore.getState());
+    }
+  }, [pushUpdate, store.roomCode]);
+
+  const handleSubmitPlayerName = async (playerName: string) => {
+    if (!store.myPlayerId || !store.roomCode) return;
+
+    const currentPlayer = store.players[store.myPlayerId];
+    if (currentPlayer) {
+      const updatedPlayers = {
+        ...store.players,
+        [store.myPlayerId]: {
+          ...currentPlayer,
+          name: playerName.trim() || currentPlayer.name,
+        },
+      };
+
+      const updatedGameState = {
+        players: updatedPlayers,
+        cards: store.cards,
+        activePlayerId: store.activePlayerId,
+        failedPair: store.failedPair,
+        winnerId: store.winnerId,
+        selectedCardId: store.selectedCardId,
+        gameMode: store.gameMode,
+        hostId: store.hostId,
+      };
+
+      store.syncFromSupabase(updatedGameState);
+      await pushUpdate(useSpeedCardsStore.getState());
+      return;
+    }
+
+    const { data, error: supabaseError } = await supabase
+      .from("lobbies")
+      .select("game_state, game_type")
+      .eq("code", store.roomCode)
+      .single();
+
+    if (supabaseError || !data || data.game_type !== "speed-cards") {
+      setError("Room not found or wrong game type");
+      return;
+    }
+
+    const currentGameState = data.game_state || {};
+    const existingPlayers = (currentGameState.players || {}) as Record<
+      string,
+      { total?: number }
+    >;
 
     const updatedPlayers = {
       ...existingPlayers,
-      [myId]: { id: myId, name: "Player 2", matches: 0, total: 0 },
+      [store.myPlayerId]: {
+        id: store.myPlayerId,
+        name: playerName.trim() || "Player 2",
+        matches: 0,
+        total: Object.values(existingPlayers)[0]?.total || 0,
+      },
     };
 
     const updatedGameState = {
@@ -143,7 +248,7 @@ export default function SpeedCardsPage() {
     const { error: updateError } = await supabase
       .from("lobbies")
       .update({ game_state: updatedGameState })
-      .eq("code", code);
+      .eq("code", store.roomCode);
 
     if (updateError) {
       setError("Failed to join room");
@@ -151,36 +256,24 @@ export default function SpeedCardsPage() {
     }
 
     store.syncFromSupabase(updatedGameState);
-    store.setRoomCode(code);
-    store.setGameMode("duel");
-  };
-
-  const handleStartSolo = () => {
-    fetchWords();
-  };
-
-  const handleSelectCard = async (cardId: string) => {
-    store.selectCard(cardId);
-    if (store.gameMode === "duel") {
-      await pushUpdate(useSpeedCardsStore.getState());
-    }
   };
 
   if (!store.gameMode && !store.roomCode) {
     return (
       <SpeedCardsSetup
         onCreateDuel={handleCreateDuel}
-        onJoinDuel={handleJoinDuel}
+        onOpenJoinRoom={handleOpenJoinRoom}
         onStartSolo={handleStartSolo}
       />
     );
   }
 
-  // Check if current user is the host/creator (the first player in the lobby)
   const playerIds = Object.keys(store.players);
-  const isHost = playerIds.length > 0 && playerIds[0] === store.myPlayerId;
+  const currentPlayerId =
+    store.myPlayerId || localStorage.getItem("alias_player_id") || null;
+  const isHost = store.hostId !== null && store.hostId === currentPlayerId;
   const isMyTurn =
-    store.gameMode === "solo" || store.activePlayerId === store.myPlayerId;
+    store.gameMode === "solo" || store.activePlayerId === currentPlayerId;
 
   return (
     <div className="max-w-4xl mx-auto p-6 text-primary">
@@ -204,6 +297,8 @@ export default function SpeedCardsPage() {
           isHost={isHost}
           loading={loading}
           fetchWords={fetchWords}
+          onSubmitPlayerName={handleSubmitPlayerName}
+          pushUpdate={updateRoomState}
         />
       ) : (
         <SpeedCardsGameBoard

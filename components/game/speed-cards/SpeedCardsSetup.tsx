@@ -1,14 +1,16 @@
 import { useState } from "react";
-import { useSpeedCardsStore } from "@/store/useSpeedCardsStore";
 
 interface Props {
   onCreateDuel: () => void;
-  onJoinDuel: (code: string) => void;
+  onOpenJoinRoom: (code: string) => Promise<void>;
   onStartSolo: () => void;
 }
 
-export const SpeedCardsSetup = ({ onCreateDuel, onJoinDuel, onStartSolo }: Props) => {
-  const store = useSpeedCardsStore();
+export const SpeedCardsSetup = ({
+  onCreateDuel,
+  onOpenJoinRoom,
+  onStartSolo,
+}: Props) => {
   const [showJoinInput, setShowJoinInput] = useState(false);
   const [inputCode, setInputCode] = useState("");
 
@@ -18,19 +20,19 @@ export const SpeedCardsSetup = ({ onCreateDuel, onJoinDuel, onStartSolo }: Props
         <h1 className="text-3xl font-black text-primary mb-2 tracking-widest uppercase italic drop-shadow-[0_1px_1px_rgba(0,0,0,0.4)]">
           Speed Cards
         </h1>
-        <p className="text-primary/60 mb-10 text-sm tracking-widest uppercase">CatherineGames Platform</p>
+        <p className="text-primary/60 mb-10 text-sm tracking-widest uppercase">
+          CatherineGames Platform
+        </p>
 
         <div className="space-y-4">
           {/* Solo Mode */}
           <button
             onClick={() => {
-              store.setGameMode("solo");
               onStartSolo();
             }}
-            className="w-full py-5 rounded-2xl font-bold uppercase tracking-widest bg-primary/90 hover:bg-primary text-primary-foreground shadow-lg shadow-primary/30 transition-all flex flex-col items-center justify-center gap-1"
+            className="w-full py-4 rounded-2xl font-bold uppercase tracking-widest bg-primary/50 hover:bg-primary text-primary-foreground transition-all flex flex-col items-center justify-center gap-1"
           >
             <span className="text-lg">👤 Solo Play</span>
-            <span className="text-[10px] opacity-70 normal-case tracking-normal">Train your speed alone</span>
           </button>
 
           <div className="flex items-center gap-4 my-6 text-primary/40">
@@ -44,7 +46,6 @@ export const SpeedCardsSetup = ({ onCreateDuel, onJoinDuel, onStartSolo }: Props
             <div className="grid grid-cols-2 gap-4">
               <button
                 onClick={() => {
-                  store.setGameMode("duel");
                   onCreateDuel();
                 }}
                 className="py-4 rounded-2xl font-bold uppercase tracking-widest bg-secondary/5 text-primary border border-border hover:bg-secondary/10 transition-all shadow-sm text-[10px]"
@@ -74,7 +75,7 @@ export const SpeedCardsSetup = ({ onCreateDuel, onJoinDuel, onStartSolo }: Props
                   Cancel
                 </button>
                 <button
-                  onClick={() => onJoinDuel(inputCode)}
+                  onClick={() => onOpenJoinRoom(inputCode)}
                   className="py-3 bg-primary text-primary-foreground rounded-xl font-bold uppercase text-[10px] tracking-widest"
                 >
                   Connect
