@@ -19,8 +19,47 @@ export const SpeedCardsGameBoard = ({
 }: SpeedCardsGameBoardProps) => {
   return (
     <>
-      <div className="space-y-6">
+      <div className="space-y-6 relative">
         {/* Turn Banner for Duel Mode */}
+
+        {/* In-game deck controls */}
+        {store.cards.some((card) => !card.isMatched) && (
+          <div className="space-y-4">
+            <div className="flex flex-wrap justify-center gap-2 mb-2">
+              {["A2", "B1", "B2"].map((category) => {
+                const active = store.selectedCategories.includes(category);
+                return (
+                  <button
+                    key={category}
+                    onClick={() => store.toggleCategory(category)}
+                    className={`px-3 py-1 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all border ${
+                      active
+                        ? "bg-primary border-primary text-primary-foreground shadow-lg"
+                        : "bg-secondary/5 border-border text-primary/50 hover:bg-secondary/10"
+                    }`}
+                  >
+                    {category}
+                  </button>
+                );
+              })}
+            </div>
+            <div className="flex flex-col items-center gap-2">
+              <button
+                onClick={fetchWords}
+                disabled={loading || (store.gameMode === "duel" && !isHost)}
+                className="px-6 py-3 bg-primary text-primary-foreground font-bold rounded-xl hover:scale-105 transition-transform disabled:opacity-50"
+              >
+                {loading ? "Refreshing..." : "New Deck of Words"}
+              </button>
+              {store.gameMode === "duel" && !isHost && (
+                <p className="text-[10px] text-primary/40 uppercase tracking-widest">
+                  Only the host can request a new deck.
+                </p>
+              )}
+            </div>
+          </div>
+        )}
+
         {store.gameMode === "duel" && (
           <div
             className={`p-4 rounded-2xl border text-center font-bold tracking-wide transition-all ${
@@ -78,17 +117,18 @@ export const SpeedCardsGameBoard = ({
         </div>
 
         {/* Cards Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 relative">
-          {store.cards.map((card) => {
-            const isSelected = store.selectedCardId === card.id;
-            const isFailed = store.failedPair?.includes(card.id);
+        {store.cards.some((card) => !card.isMatched) && (
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 relative">
+            {store.cards.map((card) => {
+              const isSelected = store.selectedCardId === card.id;
+              const isFailed = store.failedPair?.includes(card.id);
 
-            return (
-              <button
-                key={card.id}
-                onClick={() => !card.isMatched && handleSelectCard(card.id)}
-                disabled={card.isMatched || !isMyTurn || !!store.failedPair}
-                className={`h-32 p-4 rounded-2xl border-2 transition-all flex items-center justify-center text-center font-bold text-sm leading-tight
+              return (
+                <button
+                  key={card.id}
+                  onClick={() => !card.isMatched && handleSelectCard(card.id)}
+                  disabled={card.isMatched || !isMyTurn || !!store.failedPair}
+                  className={`h-32 p-4 rounded-2xl border-2 transition-all flex items-center justify-center text-center font-bold text-sm leading-tight
                     ${
                       card.isMatched
                         ? "opacity-0 scale-90 pointer-events-none"
@@ -100,16 +140,17 @@ export const SpeedCardsGameBoard = ({
                               ? "bg-secondary/5 border-border hover:border-primary/50 hover:bg-secondary/10 cursor-pointer"
                               : "bg-secondary/2 border-border/40 opacity-70 cursor-not-allowed"
                     }`}
-              >
-                {card.text}
-              </button>
-            );
-          })}
-        </div>
+                >
+                  {card.text}
+                </button>
+              );
+            })}
+          </div>
+        )}
 
         {/* Winner banner / Game Over */}
         {store.cards.length > 0 && store.cards.every((c) => c.isMatched) && (
-          <div className="text-center py-10 bg-secondary/5 border border-border rounded-3xl mt-8 animate-bounce">
+          <div className="text-center py-10 bg-secondary border border-border rounded-3xl mt-8">
             {store.gameMode === "duel" ? (
               store.winnerId === store.myPlayerId ? (
                 <div>
@@ -153,13 +194,39 @@ export const SpeedCardsGameBoard = ({
             {/* Play Again button (only host can trigger in duel mode) */}
             {store.gameMode === "duel" ? (
               isHost ? (
-                <button
-                  onClick={fetchWords}
-                  disabled={loading}
-                  className="px-6 py-3 bg-primary text-primary-foreground font-bold rounded-xl hover:scale-105 transition-transform"
-                >
-                  {loading ? "Resetting..." : "Play Again 🔄"}
-                </button>
+                <div className="space-y-4">
+                  <div className="text-xs uppercase tracking-widest text-primary/60">
+                    Choose difficulty for next round
+                  </div>
+                  <div className="flex justify-center gap-2">
+                    {["A2", "B1", "B2"].map((category) => {
+                      const active =
+                        store.selectedCategories.includes(category);
+                      return (
+                        <button
+                          key={category}
+                          onClick={() => store.toggleCategory(category)}
+                          className={`px-3 py-1 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all border ${
+                            active
+                              ? "bg-primary border-primary text-primary-foreground shadow-lg"
+                              : "bg-secondary/5 border-border text-primary/50 hover:bg-secondary/10"
+                          }`}
+                        >
+                          {category}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <div className="flex flex-col gap-3">
+                    <button
+                      onClick={fetchWords}
+                      disabled={loading}
+                      className="px-6 py-3 bg-primary text-primary-foreground font-bold rounded-xl hover:scale-105 transition-transform"
+                    >
+                      {loading ? "Resetting..." : "Play Again 🔄"}
+                    </button>
+                  </div>
+                </div>
               ) : (
                 <p className="text-xs text-primary/40 uppercase tracking-widest font-bold">
                   Waiting for the host to restart the game...
