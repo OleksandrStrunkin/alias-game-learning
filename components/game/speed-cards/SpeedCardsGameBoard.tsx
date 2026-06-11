@@ -42,18 +42,19 @@ export const SpeedCardsGameBoard = ({
 
         {/* In-game deck controls */}
         {store.cards.some((card) => !card.isMatched) && (
-          <div className="space-y-4">
+          <div className="space-y-4 flex justify-between">
             <div className="flex flex-wrap justify-center gap-2 mb-2">
               {["A2", "B1", "B2"].map((category) => {
                 const active = store.selectedCategories.includes(category);
                 return (
                   <button
+                    disabled={loading || (store.gameMode === "duel" && !isHost)}
                     key={category}
                     onClick={async () => {
                       store.toggleCategory(category);
                       if (onSyncCategories) await onSyncCategories();
                     }}
-                    className={`px-3 py-1 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all border ${
+                    className={`px-3 py-1 rounded-xl text-[10px] font-bold uppercase tracking-widest disabled:opacity-50 transition-all border ${
                       active
                         ? "bg-primary border-primary text-primary-foreground shadow-lg"
                         : "bg-secondary/5 border-border text-primary/50 hover:bg-secondary/10"
@@ -64,47 +65,20 @@ export const SpeedCardsGameBoard = ({
                 );
               })}
             </div>
-            <div className="flex flex-col items-center gap-2">
-              <button
-                onClick={fetchWords}
-                disabled={loading || (store.gameMode === "duel" && !isHost)}
-                className="px-6 py-3 bg-primary text-primary-foreground font-bold rounded-xl hover:scale-105 transition-transform disabled:opacity-50"
-              >
-                {loading ? "Refreshing..." : "New Deck of Words"}
-              </button>
+            <div className="flex items-center gap-2">
               {store.gameMode === "duel" && !isHost && (
                 <p className="text-[10px] text-primary/40 uppercase tracking-widest">
                   Only the host can request a new deck.
                 </p>
               )}
+              <button
+                onClick={fetchWords}
+                disabled={loading || (store.gameMode === "duel" && !isHost)}
+                className="px-4 py-1 bg-primary text-primary-foreground font-bold rounded-xl transition-all hover:bg-primary/90 disabled:opacity-50"
+              >
+                {loading ? "Refreshing..." : "New Deck of Words"}
+              </button>
             </div>
-          </div>
-        )}
-
-        {store.gameMode === "duel" && (
-          <div
-            className={`p-4 rounded-2xl border text-center font-bold tracking-wide transition-all ${
-              isMyTurn
-                ? "bg-primary/10 border-primary/40 text-primary"
-                : "bg-secondary/5 border-border text-primary/50"
-            }`}
-          >
-            {isMyTurn ? (
-              <div className="flex items-center justify-center gap-2">
-                <span className="relative flex h-3 w-3">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
-                </span>
-                <span>Your Turn! Click a card and its translation.</span>
-              </div>
-            ) : (
-              <div className="flex items-center justify-center gap-2">
-                <span className="text-sm">⏳</span>
-                <span>
-                  Opponent's Turn (Waiting for opponent to make a move...)
-                </span>
-              </div>
-            )}
           </div>
         )}
 
@@ -176,7 +150,7 @@ export const SpeedCardsGameBoard = ({
                   key={card.id}
                   onClick={() => !card.isMatched && handleSelectCard(card.id)}
                   disabled={card.isMatched || !isMyTurn || !!store.failedPair}
-                  className={`h-32 p-2 rounded-2xl border-2 transition-all flex items-center justify-center text-center font-bold text-xl leading-tight
+                  className={`h-24 p-2 rounded-2xl border-2 transition-all flex items-center justify-center text-center font-bold text-lg leading-tight
                     ${
                       card.isMatched
                         ? "opacity-0 scale-90 pointer-events-none"
