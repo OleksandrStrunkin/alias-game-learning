@@ -93,7 +93,7 @@ export default function SpeedCardsPage() {
     store.gameMode === "solo" || store.activePlayerId === currentPlayerId;
 
   return (
-    <div className="max-w-4xl mx-auto p-6 text-primary">
+    <div className="max-w-4xl mx-auto text-primary">
       {error && (
         <div className="mb-4 p-3 bg-destructive/20 border border-destructive/50 rounded-xl text-destructive-foreground text-xs text-center font-bold uppercase tracking-widest">
           {error}

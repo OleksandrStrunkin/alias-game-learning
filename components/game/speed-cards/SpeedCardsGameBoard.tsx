@@ -42,7 +42,7 @@ export const SpeedCardsGameBoard = ({
 
         {/* In-game deck controls */}
         {store.cards.some((card) => !card.isMatched) && (
-          <div className="space-y-4 flex justify-between">
+          <div className="space-y-4 flex flex-col md:flex-row justify-between items-start">
             <div className="flex flex-wrap justify-center gap-2 mb-2">
               {["A2", "B1", "B2"].map((category) => {
                 const active = store.selectedCategories.includes(category);
@@ -67,7 +67,7 @@ export const SpeedCardsGameBoard = ({
             </div>
             <div className="flex items-center gap-2">
               {store.gameMode === "duel" && !isHost && (
-                <p className="text-[10px] text-primary/40 uppercase tracking-widest">
+                <p className="text-[10px] hidden md:block text-primary/40 uppercase tracking-widest">
                   Only the host can request a new deck.
                 </p>
               )}

@@ -19,34 +19,32 @@ export const SpeedCardsHeader = ({
   return (
     <div className="flex justify-between items-center mb-8">
       <div className="flex gap-3 items-center">
-        <h1 className="text-3xl font-bold italic uppercase tracking-tighter">
+        <h1 className="text-xl md:text-3xl font-bold italic uppercase tracking-tighter">
           Speed Cards
         </h1>
-        <div>
-          <p>
-            <p className="text-[10px] text-primary font-bold uppercase tracking-widest">
-              Mode: {gameMode === "solo" ? "👤 Solo" : "⚔️ Duel"}
-            </p>
-            <p className="text-[10px] text-primary uppercase font-bold tracking-wider ">
-              Criteria: {selectedCategories.join(", ")}
-            </p>
-            <p className="text-[10px] text-primary uppercase font-bold tracking-wider ">
-              Time: {turnTime ? `${turnTime}s` : "No limit"}
-            </p>
+        <div className="hidden lg:block">
+          <p className="text-[10px] text-primary font-bold uppercase tracking-widest">
+            Mode: {gameMode === "solo" ? "👤 Solo" : "⚔️ Duel"}
+          </p>
+          <p className="text-[10px] text-primary uppercase font-bold tracking-wider ">
+            Criteria: {selectedCategories.join(", ")}
+          </p>
+          <p className="text-[10px] text-primary uppercase font-bold tracking-wider ">
+            Time: {turnTime ? `${turnTime}s` : "No limit"}
           </p>
         </div>
       </div>
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2">
         {roomCode && (
-          <div className="text-sm font-mono bg-primary/10 px-3 py-1 rounded-full border border-primary/20">
-            Room: {roomCode}
+          <div className="text-sm flex flex-row font-mono bg-primary/10 px-3 py-1 rounded-full border border-primary/20">
+            Room: <span>{roomCode}</span>
           </div>
         )}
         <button
           onClick={onQuit}
-          className="text-xs uppercase font-bold border border-primary/20 px-3 py-1 rounded-lg hover:bg-primary/10 transition-colors"
+          className="text-xs uppercase flex flex-row font-bold border border-primary/20 px-3 py-1 rounded-lg hover:bg-primary/10 transition-colors"
         >
-          Quit 🚪
+          Quit <span>🚪</span>
         </button>
       </div>
     </div>
