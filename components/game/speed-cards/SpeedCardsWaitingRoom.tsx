@@ -66,6 +66,8 @@ export const SpeedCardsWaitingRoom = ({
     await onSubmitPlayerName(playerName.trim());
   };
 
+  
+
   return (
     <div className="text-center py-16 bg-secondary/5 rounded-4xl border border-border border-dashed px-6">
       {store.gameMode === "duel" ? (
@@ -122,8 +124,8 @@ export const SpeedCardsWaitingRoom = ({
               )}
             </button>
           </div>
-          <div>
-            <div className="bg-secondary/20 border border-border/50 p-5 rounded-3xl shadow-inner mx-auto max-w-2xl">
+          <div className="flex flex-col gap-5 md:flex-row">
+            <div className="flex-1/2 bg-secondary/20 border border-border/50 p-5 rounded-3xl shadow-inner mx-auto max-w-2xl">
               <h3 className="text-primary/50 text-[10px] font-black uppercase tracking-[0.2em] mb-4">
                 Select word difficulty
               </h3>
@@ -151,7 +153,8 @@ export const SpeedCardsWaitingRoom = ({
                 </h3>
                 <div className="flex flex-wrap justify-center gap-2">
                   {[10, 15, 20, 0].map((t) => {
-                    const isActive = t === 0 ? turnTime === null : turnTime === t;
+                    const isActive =
+                      t === 0 ? turnTime === null : turnTime === t;
                     return isHost ? (
                       <button
                         key={t}
@@ -183,14 +186,16 @@ export const SpeedCardsWaitingRoom = ({
                 </div>
               </div>
             </div>
-            <div className="flex flex-col gap-6 max-w-xl mx-auto">
+            <div className="flex flex-1/2 flex-col gap-6 max-w-xl mx-auto">
               <div className="grid grid-cols-2 gap-4">
                 {playerIds.map((pId, idx) => (
                   <div
                     key={pId}
                     className="bg-secondary/10 p-4 rounded-2xl border border-border"
                   >
-                    <div className="text-2xl mb-1">{idx === 0 ? "👑" : "⚔️"}</div>
+                    <div className="text-2xl mb-1">
+                      {pId === store.hostId ? "👑" : "⚔️"}
+                    </div>
                     <div className="text-sm font-bold">
                       {store.players[pId].name}
                     </div>
@@ -209,7 +214,7 @@ export const SpeedCardsWaitingRoom = ({
                   </div>
                 )}
               </div>
-  
+
               {shouldAskForName ? (
                 <div className="space-y-4">
                   <div className="text-left text-sm uppercase tracking-[0.18em] text-primary/80">
@@ -226,9 +231,13 @@ export const SpeedCardsWaitingRoom = ({
                   <button
                     onClick={handleSubmit}
                     disabled={loading || !playerName.trim()}
-                    className="w-full px-8 py-4 bg-primary text-primary-foreground font-bold rounded-2xl hover:scale-105 transition-transform disabled:opacity-50 shadow-lg shadow-primary/30"
+                    className="w-full px-8 py-4 bg-primary text-primary-foreground font-bold rounded-2xl hover:bg-primary/80 transition-transform disabled:opacity-50 shadow-lg shadow-primary/30"
                   >
-                    {loading ? "Saving..." : isJoined ? "Save name" : "Join room"}
+                    {loading
+                      ? "Saving..."
+                      : isJoined
+                        ? "Save name"
+                        : "Join room"}
                   </button>
                 </div>
               ) : playerIds.length >= 2 ? (
@@ -236,7 +245,7 @@ export const SpeedCardsWaitingRoom = ({
                   <button
                     onClick={fetchWords}
                     disabled={loading}
-                    className="px-8 py-4 bg-primary text-primary-foreground font-bold rounded-2xl hover:scale-105 transition-transform disabled:opacity-50 shadow-lg shadow-primary/30"
+                    className="px-8 py-4 bg-primary text-primary-foreground font-bold rounded-2xl hover:bg-primary/80 transition-transform disabled:opacity-50 shadow-lg shadow-primary/30"
                   >
                     {loading ? "Loading words..." : "Start Game 🎮"}
                   </button>
@@ -266,7 +275,7 @@ export const SpeedCardsWaitingRoom = ({
         <button
           onClick={fetchWords}
           disabled={loading}
-          className="px-8 py-4 bg-primary text-primary-foreground font-bold rounded-2xl hover:scale-105 transition-transform disabled:opacity-50"
+          className="px-8 py-4 bg-primary text-primary-foreground font-bold rounded-2xl transition-transform disabled:opacity-50"
         >
           {loading ? "Loading words..." : "Start Game"}
         </button>
