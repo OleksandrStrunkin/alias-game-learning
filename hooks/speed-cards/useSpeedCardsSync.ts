@@ -3,11 +3,13 @@ import { useSpeedCardsStore } from "@/store/useSpeedCardsStore";
 import { supabase } from "@/lib/supabase";
 
 export const useSpeedCardsSync = () => {
-  const store = useSpeedCardsStore();
+  const roomCode = useSpeedCardsStore((state) => state.roomCode);
+  const syncFromSupabase = useSpeedCardsStore((state) => state.syncFromSupabase);
+  const resetGame = useSpeedCardsStore((state) => state.resetGame);
 
   const pushUpdate = useCallback(
     async (manualState?: any) => {
-      if (!store.roomCode) return;
+      if (!roomCode) return;
       try {
         const stateToPush = manualState || useSpeedCardsStore.getState();
         const pureData = JSON.parse(JSON.stringify(stateToPush));
@@ -18,43 +20,43 @@ export const useSpeedCardsSync = () => {
         await supabase
           .from("lobbies")
           .update({ game_state: pureData })
-          .eq("code", store.roomCode);
+          .eq("code", roomCode);
       } catch (err) {
         console.error("SpeedCardsSync error pushing update:", err);
       }
     },
-    [store.roomCode],
+    [roomCode],
   );
 
   const leaveLobby = useCallback(async () => {
-    if (!store.roomCode) return;
+    if (!roomCode) return;
 
     try {
-      await supabase.from("lobbies").delete().eq("code", store.roomCode);
+      await supabase.from("lobbies").delete().eq("code", roomCode);
     } catch (err) {
       console.error("SpeedCardsSync error deleting lobby:", err);
     }
 
-    store.resetGame();
+    resetGame();
     localStorage.removeItem("speed_cards_room_code");
-  }, [store.roomCode, store.resetGame]);
+  }, [roomCode, resetGame]);
 
   useEffect(() => {
-    if (!store.roomCode) return;
+    if (!roomCode) return;
 
     const channel = supabase
-      .channel(`lobby-${store.roomCode}`)
+      .channel(`lobby-${roomCode}`)
       .on(
         "postgres_changes",
         {
           event: "UPDATE",
           schema: "public",
           table: "lobbies",
-          filter: `code=eq.${store.roomCode}`,
+          filter: `code=eq.${roomCode}`,
         },
         (payload) => {
           if (payload.new && payload.new.game_state) {
-            store.syncFromSupabase(payload.new.game_state);
+            syncFromSupabase(payload.new.game_state);
           }
         },
       )
@@ -64,10 +66,10 @@ export const useSpeedCardsSync = () => {
           event: "DELETE",
           schema: "public",
           table: "lobbies",
-          filter: `code=eq.${store.roomCode}`,
+          filter: `code=eq.${roomCode}`,
         },
         () => {
-          store.resetGame();
+          resetGame();
           localStorage.removeItem("speed_cards_room_code");
         },
       )
@@ -76,7 +78,7 @@ export const useSpeedCardsSync = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [store.roomCode, store.syncFromSupabase, store.resetGame]);
+  }, [roomCode, syncFromSupabase, resetGame]);
 
   return { pushUpdate, leaveLobby };
 };

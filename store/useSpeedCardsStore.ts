@@ -96,7 +96,6 @@ export const useSpeedCardsStore = create<SpeedCardsState>((set) => ({
       players: {},
       isGameStarted: false,
       roomCode: null,
-      myPlayerId: null,
       selectedCategories: ["A2", "B1"],
       hostId: null,
       gameMode: null,
