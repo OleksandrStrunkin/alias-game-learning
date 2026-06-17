@@ -21,8 +21,8 @@ export const AliasWaitingRoom = ({ pushUpdate }: WaitingRoomProps) => {
           Waiting for Players
         </p>
 
-        <div className="bg-secondary/20 border border-border/50 p-6 rounded-3xl mb-8 shadow-inner">
-          <h3 className="text-primary/50 text-[10px] font-black uppercase tracking-[0.2em] mb-4">
+        <div className="bg-secondary/20 border border-border/50 p-6 rounded-sm mb-8 shadow-inner">
+          <h3 className="text-primary/50 text-xs font-black uppercase tracking-[0.2em] mb-4">
             Select Word Sources
           </h3>
           <div className="flex flex-wrap justify-center gap-2">
@@ -33,7 +33,7 @@ export const AliasWaitingRoom = ({ pushUpdate }: WaitingRoomProps) => {
                   store.toggleCategory(cat);
                   pushUpdate(useAliasStore.getState());
                 }}
-                className={`px-4 py-2 rounded-xl text-[10px] font-bold transition-all border uppercase tracking-wider ${
+                className={`px-4 py-2 rounded-sm text-xs font-bold transition-all border uppercase tracking-wider ${
                   store.selectedCategories.includes(cat)
                     ? "bg-primary border-primary text-primary-foreground shadow-lg shadow-primary/40"
                     : "bg-secondary/5 border-border text-primary/40 hover:bg-secondary/10"
@@ -67,7 +67,7 @@ export const AliasWaitingRoom = ({ pushUpdate }: WaitingRoomProps) => {
               value={tempName}
               onChange={(e) => setTempName(e.target.value)}
               placeholder="Enter team name"
-              className="w-full bg-secondary/10 border border-border p-4 rounded-2xl text-center uppercase  outline-none focus:ring-2 focus:ring-primary/50 shadow-inner"
+              className="w-full bg-secondary/10 border border-border p-4 rounded-sm text-center uppercase  outline-none focus:ring-2 focus:ring-primary/50 shadow-inner"
             />
             <button
               onClick={async () => {
@@ -77,7 +77,7 @@ export const AliasWaitingRoom = ({ pushUpdate }: WaitingRoomProps) => {
                   setTimeout(() => pushUpdate(useAliasStore.getState()), 50);
                 }
               }}
-              className="w-full py-4 rounded-2xl font-bold uppercase tracking-widest bg-primary/90 hover:bg-primary text-primary-foreground shadow-lg shadow-primary/30 transition-all"
+              className="w-full py-4 rounded-sm font-bold uppercase tracking-widest bg-primary/90 hover:bg-primary text-primary-foreground shadow-lg shadow-primary/30 transition-all"
             >
               Join Game
             </button>

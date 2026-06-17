@@ -125,8 +125,8 @@ export const SpeedCardsWaitingRoom = ({
             </button>
           </div>
           <div className="flex flex-col gap-5 md:flex-row">
-            <div className="flex-1/2 bg-secondary/20 border border-border/50 p-5 rounded-3xl shadow-inner mx-auto max-w-2xl">
-              <h3 className="text-primary/50 text-[10px] font-black uppercase tracking-[0.2em] mb-4">
+            <div className="flex-1/2 bg-secondary/50 border border-border/50 p-5 rounded-sm shadow-inner mx-auto max-w-2xl">
+              <h3 className="text-primary/50 text-sm font-black uppercase tracking-[0.2em] mb-4">
                 Select word difficulty
               </h3>
               <div className="flex flex-wrap justify-center gap-2">
@@ -136,7 +136,7 @@ export const SpeedCardsWaitingRoom = ({
                     <button
                       key={category}
                       onClick={() => handleToggleCategory(category)}
-                      className={`px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all border ${
+                      className={`px-4 py-2 rounded-sm text-xs font-bold uppercase tracking-widest transition-all border ${
                         active
                           ? "bg-primary border-primary text-primary-foreground shadow-lg shadow-primary/40"
                           : "bg-secondary/5 border-border text-primary/50 hover:bg-secondary/10"
@@ -148,7 +148,7 @@ export const SpeedCardsWaitingRoom = ({
                 })}
               </div>
               <div className="mt-4">
-                <h3 className="text-primary/50 text-[10px] font-black uppercase tracking-[0.2em] mb-2">
+                <h3 className="text-primary/50 text-sm font-black uppercase tracking-[0.2em] mb-2">
                   Turn time
                 </h3>
                 <div className="flex flex-wrap justify-center gap-2">
@@ -162,7 +162,7 @@ export const SpeedCardsWaitingRoom = ({
                           setTurnTime(t === 0 ? null : t);
                           if (store.roomCode) await pushUpdate();
                         }}
-                        className={`px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all border ${
+                        className={`px-4 py-2 rounded-sm text-xs font-bold uppercase tracking-widest transition-all border ${
                           isActive
                             ? "bg-primary border-primary text-primary-foreground shadow-lg"
                             : "bg-secondary/5 border-border text-primary/50 hover:bg-secondary/10"
@@ -173,7 +173,7 @@ export const SpeedCardsWaitingRoom = ({
                     ) : (
                       <div
                         key={t}
-                        className={`px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest border ${
+                        className={`px-4 py-2 rounded-sm text-sm font-bold uppercase tracking-widest border ${
                           isActive
                             ? "bg-primary border-primary text-primary-foreground"
                             : "bg-secondary/5 border-border text-primary/50"
@@ -191,7 +191,7 @@ export const SpeedCardsWaitingRoom = ({
                 {playerIds.map((pId, idx) => (
                   <div
                     key={pId}
-                    className="bg-secondary/10 p-4 rounded-2xl border border-border"
+                    className="bg-secondary/10 p-4 rounded-sm border border-border"
                   >
                     <div className="text-2xl mb-1">
                       {pId === store.hostId ? "👑" : "⚔️"}
@@ -199,16 +199,16 @@ export const SpeedCardsWaitingRoom = ({
                     <div className="text-sm font-bold">
                       {store.players[pId].name}
                     </div>
-                    <div className="text-[9px] opacity-50 font-mono mt-1">
+                    <div className="text-xs opacity-50 font-mono mt-1">
                       {pId === store.myPlayerId ? "You" : "Opponent"}
                     </div>
                   </div>
                 ))}
                 {playerIds.length < 2 && (
-                  <div className="bg-secondary/5 p-4 rounded-2xl border border-border/50 border-dashed flex flex-col items-center justify-center text-primary/40">
-                    <div className="animate-pulse text-lg">⏳</div>
-                    <div className="text-xs font-bold mt-2">Waiting...</div>
-                    <div className="text-[8px] uppercase tracking-wider mt-1">
+                  <div className="bg-secondary/5 p-4 rounded-sm border border-border/50 border-dashed flex flex-col items-center justify-center text-primary/40">
+                    <div className="animate-pulse text-2xl">⏳</div>
+                    <div className="text-sm font-bold mt-2">Waiting...</div>
+                    <div className="text-xs tracking-wider mt-1">
                       Player 2
                     </div>
                   </div>
@@ -226,12 +226,12 @@ export const SpeedCardsWaitingRoom = ({
                     value={playerName}
                     onChange={(event) => setPlayerName(event.target.value)}
                     placeholder="Your name"
-                    className="w-full rounded-2xl border border-border bg-background px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-primary/30"
+                    className="w-full rounded-sm border border-border bg-background px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-primary/30"
                   />
                   <button
                     onClick={handleSubmit}
                     disabled={loading || !playerName.trim()}
-                    className="w-full px-8 py-4 bg-primary text-primary-foreground font-bold rounded-2xl hover:bg-primary/80 transition-transform disabled:opacity-50 shadow-lg shadow-primary/30"
+                    className="w-full px-8 py-4 bg-primary text-primary-foreground font-bold rounded-sm hover:bg-primary/80 transition-transform disabled:opacity-50 "
                   >
                     {loading
                       ? "Saving..."
@@ -245,7 +245,7 @@ export const SpeedCardsWaitingRoom = ({
                   <button
                     onClick={fetchWords}
                     disabled={loading}
-                    className="px-8 py-4 bg-primary text-primary-foreground font-bold rounded-2xl hover:bg-primary/80 transition-transform disabled:opacity-50 shadow-lg shadow-primary/30"
+                    className="px-8 py-4 bg-primary text-primary-foreground font-bold rounded-2xl hover:bg-primary/80 transition-transform disabled:opacity-50"
                   >
                     {loading ? "Loading words..." : "Start Game 🎮"}
                   </button>

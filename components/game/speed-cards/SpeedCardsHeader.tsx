@@ -36,13 +36,13 @@ export const SpeedCardsHeader = ({
       </div>
       <div className="flex items-center gap-2">
         {roomCode && (
-          <div className="text-sm flex flex-row font-mono bg-primary/10 px-3 py-1 rounded-full border border-primary/20">
+          <div className="text-sm flex flex-row font-mono bg-primary/10 px-3 py-1 rounded-sm border border-primary/20">
             Room: <span>{roomCode}</span>
           </div>
         )}
         <button
           onClick={onQuit}
-          className="text-xs uppercase flex flex-row font-bold border border-primary/20 px-3 py-1 rounded-lg hover:bg-primary/10 transition-colors"
+          className="text-xs uppercase flex flex-row font-bold border border-primary/20 px-3 py-1 rounded-sm hover:bg-primary/10 transition-colors"
         >
           Quit <span>🚪</span>
         </button>
