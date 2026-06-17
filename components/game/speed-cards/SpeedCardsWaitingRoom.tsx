@@ -69,21 +69,21 @@ export const SpeedCardsWaitingRoom = ({
   
 
   return (
-    <div className="text-center py-16 bg-secondary/5 rounded-4xl border border-border border-dashed px-6">
+    <div className="w-full relative max-w-4xl backdrop-blur-xl bg-secondary/10 border border-border shadow-2xl shadow-black/40 rounded-[2.5rem] p-10 text-center">
       {store.gameMode === "duel" ? (
         <div className="space-y-6">
           <div className="flex flex-col md:flex-row justify-center items-center gap-4">
-            <h2 className="text-xl font-bold uppercase tracking-wider">
-              Waiting Room:
+            <h2 className="text-3xl font-black text-primary tracking-widest uppercase italic drop-shadow-[0_1px_1px_rgba(0,0,0,0.4)]">
+              Room:
             </h2>
-            <code className="text-xl flex flex-row font-mono bg-primary/10 px-4 py-1 rounded-sm border border-primary/20">
+            <code className="text-xl flex flex-row italic font-mono bg-primary/10 px-4 py-1 rounded-sm border border-primary/20">
               {roomCode}
             </code>
 
             <button
               onClick={handleCopy}
               className={`
-          flex items-center border border-primary/20 w-35 gap-2 px-4 py-2 rounded-sm font-medium text-sm transition-all duration-200
+          flex items-center border border-primary/20 w-35 gap-2 px-4 py-2 rounded-sm italic font-medium text-sm transition-all duration-200
           ${copied ? "bg-emerald-500/50" : "bg-primary/10 hover:bg-primary/30"}
         `}
             >

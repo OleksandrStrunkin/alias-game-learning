@@ -4,96 +4,173 @@ import { useAliasStore } from "@/store/useAliasStore";
 
 interface WaitingRoomProps {
   pushUpdate: (state: any) => Promise<void>;
+  leaveLobby: () => Promise<void>;
 }
 
-export const AliasWaitingRoom = ({ pushUpdate }: WaitingRoomProps) => {
+export const AliasWaitingRoom = ({ pushUpdate, leaveLobby }: WaitingRoomProps) => {
   const store = useAliasStore();
   const [tempName, setTempName] = useState("");
   const iHaveTeam = store.teams.some((t) => t.playerId === store.myPlayerId);
 
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    if (!store.roomCode) return;
+
+    try {
+      await navigator.clipboard.writeText(store.roomCode);
+      setCopied(true);
+
+      setTimeout(() => setCopied(false), 1000);
+    } catch (err) {
+      console.error("Не вдалося скопіювати:", err);
+    }
+  };
+
   return (
     <div className="flex items-center justify-center p-4 py-12">
-      <div className="w-full max-w-md backdrop-blur-xl bg-secondary/10 border border-border shadow-2xl shadow-black/40 rounded-[2.5rem] p-10 text-center">
-        <h1 className="text-3xl font-black text-primary mb-2 tracking-widest uppercase italic drop-shadow-[0_1px_1px_rgba(0,0,0,0.4)]">
-          Room: {store.roomCode}
-        </h1>
-        <p className="text-primary/60 mb-10 text-sm tracking-widest uppercase">
+      <div className="w-full relative max-w-4xl backdrop-blur-xl bg-secondary/10 border border-border shadow-2xl shadow-black/40 rounded-[2.5rem] p-10 text-center">
+        <button
+           onClick={async () => {
+                await leaveLobby();
+              }}
+          className="text-xs absolute top-5 right-10 uppercase mb-2 font-bold border border-primary/20 px-3 py-2 rounded-sm hover:bg-primary/10 transition-colors"
+        >
+          Quit <span>🚪</span>
+        </button>
+        <div className="flex flex-col mb-5 mt-10 md:flex-row justify-center items-center gap-4">
+            <h2 className="text-3xl font-black text-primary tracking-widest uppercase italic drop-shadow-[0_1px_1px_rgba(0,0,0,0.4)]">
+              Room:
+            </h2>
+            <code className="text-xl flex flex-row italic font-mono bg-primary/10 px-4 py-1 rounded-sm border border-primary/20">
+              {store.roomCode}
+            </code>
+
+            <button
+              onClick={handleCopy}
+              className={`
+          flex items-center border border-primary/20 w-35 gap-2 px-4 py-2 rounded-sm italic font-medium text-sm transition-all duration-200
+          ${copied ? "bg-emerald-500/50" : "bg-primary/10 hover:bg-primary/30"}
+        `}
+            >
+              {copied ? (
+                <>
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                  <span>Copied!</span>
+                </>
+              ) : (
+                <>
+                  <svg
+                    className="w-5 h-5 text-slate-500"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"
+                    />
+                  </svg>
+                  <span>Copy Code</span>
+                </>
+              )}
+            </button>
+          </div>
+        <p className="text-primary/60 mb-5 text-sm tracking-widest uppercase">
           Waiting for Players
         </p>
 
-        <div className="bg-secondary/20 border border-border/50 p-6 rounded-sm mb-8 shadow-inner">
-          <h3 className="text-primary/50 text-xs font-black uppercase tracking-[0.2em] mb-4">
-            Select Word Sources
-          </h3>
-          <div className="flex flex-wrap justify-center gap-2">
-            {["A2", "B1", "B2", "API"].map((cat) => (
-              <button
-                key={cat}
-                onClick={() => {
-                  store.toggleCategory(cat);
-                  pushUpdate(useAliasStore.getState());
-                }}
-                className={`px-4 py-2 rounded-sm text-xs font-bold transition-all border uppercase tracking-wider ${
-                  store.selectedCategories.includes(cat)
-                    ? "bg-primary border-primary text-primary-foreground shadow-lg shadow-primary/40"
-                    : "bg-secondary/5 border-border text-primary/40 hover:bg-secondary/10"
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
+        <div className="flex flex-col md:flex-row gap-5">
+          <div className="flex-1/2 bg-secondary/20 border border-border/50 p-6 rounded-sm shadow-inner">
+            <h3 className="text-primary/50 text-xs font-black uppercase tracking-[0.2em] mb-4">
+              Select Word Sources
+            </h3>
+            <div className="flex flex-wrap justify-center gap-2">
+              {["A2", "B1", "B2", "API"].map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => {
+                    store.toggleCategory(cat);
+                    pushUpdate(useAliasStore.getState());
+                  }}
+                  className={`px-4 py-2 rounded-sm text-xs font-bold transition-all border uppercase tracking-wider ${
+                    store.selectedCategories.includes(cat)
+                      ? "bg-primary border-primary text-primary-foreground shadow-lg shadow-primary/40"
+                      : "bg-secondary/5 border-border text-primary/40 hover:bg-secondary/10"
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+          </div>
+  
+          <div className="flex-1/2">
+            <div className="space-y-3 text-left">
+              {store.teams.map((t, i) => (
+                <div
+                  key={i}
+                  className="bg-secondary/5 border border-border p-4 rounded-2xl flex justify-between items-center animate-in fade-in slide-in-from-bottom-2"
+                >
+                  <span className="text-primary font-bold uppercase italic tracking-widest text-sm">
+                    {t.name}
+                  </span>
+                  <span className="text-[9px] text-primary/60 font-black tracking-[0.2em] border border-primary/20 px-2 py-1 rounded-lg">
+                    READY
+                  </span>
+                </div>
+              ))}
+            </div>
+    
+            {!iHaveTeam ? (
+              <div className="space-y-4">
+                <input
+                  value={tempName}
+                  onChange={(e) => setTempName(e.target.value)}
+                  placeholder="Enter team name"
+                  className="w-full bg-secondary/10 border border-border p-4 rounded-sm text-center uppercase  outline-none focus:ring-2 focus:ring-primary/50 shadow-inner"
+                />
+                <button
+                  onClick={async () => {
+                    if (tempName && store.myPlayerId) {
+                      store.addTeam(tempName, store.myPlayerId);
+                      setTempName("");
+                      setTimeout(() => pushUpdate(useAliasStore.getState()), 50);
+                    }
+                  }}
+                  className="w-full py-4 rounded-sm font-bold uppercase tracking-widest bg-primary/90 hover:bg-primary text-primary-foreground shadow-lg shadow-primary/30 transition-all"
+                >
+                  Join Game
+                </button>
+              </div>
+            ) : (
+              <div className="py-6 flex flex-col items-center gap-3">
+                <div className="flex gap-1">
+                  <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:-0.3s]"></span>
+                  <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:-0.15s]"></span>
+                  <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce"></span>
+                </div>
+                <p className="text-primary/40 text-[10px] font-black uppercase tracking-[0.2em]">
+                  Waiting for opponent...
+                </p>
+              </div>
+            )}
           </div>
         </div>
-
-        <div className="space-y-3 mb-8 text-left">
-          {store.teams.map((t, i) => (
-            <div
-              key={i}
-              className="bg-secondary/5 border border-border p-4 rounded-2xl flex justify-between items-center animate-in fade-in slide-in-from-bottom-2"
-            >
-              <span className="text-primary font-bold uppercase italic tracking-widest text-sm">
-                {t.name}
-              </span>
-              <span className="text-[9px] text-primary/60 font-black tracking-[0.2em] border border-primary/20 px-2 py-1 rounded-lg">
-                READY
-              </span>
-            </div>
-          ))}
-        </div>
-
-        {!iHaveTeam ? (
-          <div className="space-y-4">
-            <input
-              value={tempName}
-              onChange={(e) => setTempName(e.target.value)}
-              placeholder="Enter team name"
-              className="w-full bg-secondary/10 border border-border p-4 rounded-sm text-center uppercase  outline-none focus:ring-2 focus:ring-primary/50 shadow-inner"
-            />
-            <button
-              onClick={async () => {
-                if (tempName && store.myPlayerId) {
-                  store.addTeam(tempName, store.myPlayerId);
-                  setTempName("");
-                  setTimeout(() => pushUpdate(useAliasStore.getState()), 50);
-                }
-              }}
-              className="w-full py-4 rounded-sm font-bold uppercase tracking-widest bg-primary/90 hover:bg-primary text-primary-foreground shadow-lg shadow-primary/30 transition-all"
-            >
-              Join Game
-            </button>
-          </div>
-        ) : (
-          <div className="py-6 flex flex-col items-center gap-3">
-            <div className="flex gap-1">
-              <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:-0.3s]"></span>
-              <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:-0.15s]"></span>
-              <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce"></span>
-            </div>
-            <p className="text-primary/40 text-[10px] font-black uppercase tracking-[0.2em]">
-              Waiting for opponent...
-            </p>
-          </div>
-        )}
       </div>
     </div>
   );

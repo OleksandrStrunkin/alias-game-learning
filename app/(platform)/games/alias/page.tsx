@@ -87,7 +87,7 @@ export default function AliasPage() {
   }
 
   if (store.teams.length < 2) {
-    return <AliasWaitingRoom pushUpdate={pushUpdate} />;
+    return <AliasWaitingRoom pushUpdate={pushUpdate} leaveLobby={leaveLobby} />;
   }
 
   return (
