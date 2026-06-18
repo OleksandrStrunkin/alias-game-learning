@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSpeedCardsStore } from "@/store/useSpeedCardsStore";
 import type { SpeedCardsState } from "@/store/useSpeedCardsStore";
+import { RoomCodeCopy } from "@/components/common/RoomCodeCopy";
 
 interface SpeedCardsWaitingRoomProps {
   store: SpeedCardsState;
@@ -31,21 +32,6 @@ export const SpeedCardsWaitingRoom = ({
 
   const { roomCode } = store;
 
-  const [copied, setCopied] = useState(false);
-
-  const handleCopy = async () => {
-    if (!roomCode) return;
-
-    try {
-      await navigator.clipboard.writeText(roomCode);
-      setCopied(true);
-
-      setTimeout(() => setCopied(false), 1000);
-    } catch (err) {
-      console.error("Не вдалося скопіювати:", err);
-    }
-  };
-
   const handleToggleCategory = async (category: string) => {
     store.toggleCategory(category);
     if (store.roomCode) {
@@ -72,58 +58,7 @@ export const SpeedCardsWaitingRoom = ({
     <div className="w-full relative max-w-4xl backdrop-blur-xl bg-secondary/10 border border-border shadow-2xl shadow-black/40 rounded-[2.5rem] p-10 text-center">
       {store.gameMode === "duel" ? (
         <div className="space-y-6">
-          <div className="flex flex-col md:flex-row justify-center items-center gap-4">
-            <h2 className="text-3xl font-black text-primary tracking-widest uppercase italic drop-shadow-[0_1px_1px_rgba(0,0,0,0.4)]">
-              Room:
-            </h2>
-            <code className="text-xl flex flex-row italic font-mono bg-primary/10 px-4 py-1 rounded-sm border border-primary/20">
-              {roomCode}
-            </code>
-
-            <button
-              onClick={handleCopy}
-              className={`
-          flex items-center border border-primary/20 w-35 gap-2 px-4 py-2 rounded-sm italic font-medium text-sm transition-all duration-200
-          ${copied ? "bg-emerald-500/50" : "bg-primary/10 hover:bg-primary/30"}
-        `}
-            >
-              {copied ? (
-                <>
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                  <span>Copied!</span>
-                </>
-              ) : (
-                <>
-                  <svg
-                    className="w-5 h-5 text-slate-500"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"
-                    />
-                  </svg>
-                  <span>Copy Code</span>
-                </>
-              )}
-            </button>
-          </div>
+          <RoomCodeCopy roomCode={roomCode}/>
           <div className="flex flex-col gap-5 md:flex-row">
             <div className="flex-1/2 bg-secondary/50 border border-border/50 p-5 rounded-sm shadow-inner mx-auto max-w-2xl">
               <h3 className="text-primary/50 text-sm font-black uppercase tracking-[0.2em] mb-4">
