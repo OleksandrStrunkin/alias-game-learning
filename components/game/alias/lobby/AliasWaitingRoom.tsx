@@ -6,25 +6,16 @@ import { RoomCodeCopy } from "@/components/common/RoomCodeCopy";
 
 interface WaitingRoomProps {
   pushUpdate: (state: any) => Promise<void>;
-  leaveLobby: () => Promise<void>;
 }
 
-export const AliasWaitingRoom = ({ pushUpdate, leaveLobby }: WaitingRoomProps) => {
+export const AliasWaitingRoom = ({ pushUpdate }: WaitingRoomProps) => {
   const store = useAliasStore();
   const [tempName, setTempName] = useState("");
   const iHaveTeam = store.teams.some((t) => t.playerId === store.myPlayerId);
 
   return (
-    <div className="flex items-center justify-center p-4 py-12">
+    <div className="flex items-center justify-center">
       <div className="w-full relative max-w-4xl backdrop-blur-xl bg-secondary/10 border border-border shadow-2xl shadow-black/40 rounded-[2.5rem] p-10 text-center">
-        <button
-           onClick={async () => {
-                await leaveLobby();
-              }}
-          className="text-xs absolute top-5 right-10 uppercase mb-2 font-bold border border-primary/20 px-3 py-2 rounded-sm hover:bg-primary/10 transition-colors"
-        >
-          Quit <span>🚪</span>
-        </button>
           <RoomCodeCopy roomCode={store.roomCode}/>
         <p className="text-primary/60 mb-5 text-sm tracking-widest uppercase">
           Waiting for Players

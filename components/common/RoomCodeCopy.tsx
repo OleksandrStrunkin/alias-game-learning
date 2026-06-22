@@ -23,14 +23,13 @@ export const RoomCodeCopy = ({roomCode}: RoomCodeCopyProps) => {
 
 
     return <>
-        <div className="flex flex-col mb-5 mt-10 md:flex-row justify-center items-center gap-4">
+        <div className="flex flex-col mb-5 md:flex-row justify-center items-center gap-4">
             <h2 className="text-3xl font-black text-primary tracking-widest uppercase italic drop-shadow-[0_1px_1px_rgba(0,0,0,0.4)]">
               Room:
             </h2>
             <code className="text-xl flex flex-row italic font-mono bg-primary/10 px-4 py-1 rounded-sm border border-primary/20">
               {roomCode}
             </code>
-
             <button
               onClick={handleCopy}
               className={`

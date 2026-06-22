@@ -1,24 +1,21 @@
-import { useSpeedCardsStore } from "@/store/useSpeedCardsStore";
+import { useAliasStore } from "@/store/useAliasStore";
 
-interface SpeedCardsHeaderProps {
+interface AliasHeaderProps {
   roomCode: string | null;
   onQuit: () => void;
 }
 
-export const SpeedCardsHeader = ({
-  roomCode,
-  onQuit,
-}: SpeedCardsHeaderProps) => {
-  const selectedCategories = useSpeedCardsStore(
+export const AliasHeader = ({ roomCode, onQuit }: AliasHeaderProps) => {
+  const selectedCategories = useAliasStore(
     (state) => state.selectedCategories,
   );
-  const turnTime = useSpeedCardsStore((state) => state.turnTime);
+  const turnTime = useAliasStore((state) => state.roundDuration);
 
   return (
-    <div className="flex justify-between items-center mb-8">
+    <div className="flex justify-between mb-5 items-center max-w-4xl mx-auto">
       <div className="flex gap-3 items-center">
         <h1 className="text-xl md:text-3xl font-bold italic uppercase tracking-tighter">
-          Speed Cards
+          Alias
         </h1>
         <div className="hidden lg:block">
           <p className="text-[10px] text-primary uppercase font-bold tracking-wider ">

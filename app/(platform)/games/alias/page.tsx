@@ -8,6 +8,7 @@ import { useAliasStore } from "@/store/useAliasStore";
 import { AliasLobbyAuth } from "@/components/game/alias/lobby/AliasLobbyAuth";
 import { AliasWaitingRoom } from "@/components/game/alias/lobby/AliasWaitingRoom";
 import { GameDashboard } from "@/components/game/alias/GameDashboard";
+import { AliasHeader } from "@/components/game/alias/AliasHeader"
 
 export default function AliasPage() {
   const store = useAliasStore();
@@ -87,7 +88,12 @@ export default function AliasPage() {
   }
 
   if (store.teams.length < 2) {
-    return <AliasWaitingRoom pushUpdate={pushUpdate} leaveLobby={leaveLobby} />;
+    return (
+      <>
+        <AliasHeader onQuit={leaveLobby} roomCode={roomCode} />
+        <AliasWaitingRoom pushUpdate={pushUpdate} />
+      </>
+    );
   }
 
   return (

@@ -101,7 +101,6 @@ export default function SpeedCardsPage() {
       )}
 
       <SpeedCardsHeader
-        gameMode={store.gameMode}
         roomCode={store.roomCode}
         onQuit={leaveLobby}
       />
