@@ -62,13 +62,24 @@ export const useSpeedCardsTimer = (
         }
 
         if (pId === store.activePlayerId) {
+          const timePassed = now - ts;
+
+          const isStaleServerTimestamp =
+            prevActiveRef.current !== store.activePlayerId &&
+            timePassed > tt * 1000;
+
+          if (isStaleServerTimestamp) {
+            result[pId] = { remaining: tt, percent: 100 };
+            return;
+          }
+
           const end = ts + tt * 1000;
           const remaining = Math.max(0, Math.ceil((end - now) / 1000));
-          const percent = Math.max(
+          const exactPercent = Math.max(
             0,
-            Math.min(100, Math.round((remaining / tt) * 100)),
+            Math.min(100, ((end - now) / (tt * 1000)) * 100),
           );
-          result[pId] = { remaining, percent };
+          result[pId] = { remaining, percent: Math.round(exactPercent) };
         } else {
           result[pId] = { remaining: 0, percent: 0 };
         }

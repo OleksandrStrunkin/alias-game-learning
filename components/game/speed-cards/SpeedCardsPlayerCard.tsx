@@ -11,7 +11,8 @@ export const SpeedCardsPlayerCard = ({
 }: SpeedCardsPlayerCardProps) => {
   const player = useSpeedCardsStore((s) => s.players[playerId]);
   const isActive = useSpeedCardsStore((s) => s.activePlayerId === playerId);
-  const isMe = useSpeedCardsStore((s) => s.myPlayerId === playerId);
+const isMe = useSpeedCardsStore((s) => s.myPlayerId === playerId);
+    
 
   if (!player) return null;
 
@@ -48,8 +49,15 @@ export const SpeedCardsPlayerCard = ({
       </div>
       <div className="h-3 bg-black/10 rounded-full overflow-hidden border border-border shadow-inner">
         <div
-          className={`h-full ${isActive ? "bg-linear-to-r from-cyan-500 via-sky-400 to-blue-500" : "bg-secondary/30"} transition-all duration-200`}
-          style={{ width: `${timer?.percent ?? 0}%` }}
+          key={isActive ? "active-track" : "inactive-track"}
+          className={`h-full ${
+            isActive
+              ? "bg-linear-to-r from-cyan-500 via-sky-400 to-blue-500 transition-all duration-200"
+              : "bg-secondary/30"
+          }`}
+          style={{
+            width: `${timer?.percent ?? 0}%`,
+          }}
         />
       </div>
     </div>
