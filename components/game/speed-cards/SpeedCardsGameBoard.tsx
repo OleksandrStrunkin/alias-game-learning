@@ -1,4 +1,6 @@
 import type { SpeedCardsState } from "@/store/useSpeedCardsStore";
+import { SpeedCardsPlayerCard } from "./SpeedCardsPlayerCard";
+import { SpeedCardsDeckControls } from "./SpeedCardsDeckControls";
 
 interface SpeedCardsGameBoardProps {
   store: SpeedCardsState;
@@ -41,101 +43,22 @@ export const SpeedCardsGameBoard = ({
         )}
 
         {/* In-game deck controls */}
-        {store.cards.some((card) => !card.isMatched) && (
-          <div className="space-y-4 flex flex-col md:flex-row justify-between items-start">
-            <div className="flex flex-wrap justify-center gap-2 mb-2">
-              {["A2", "B1", "B2"].map((category) => {
-                const active = store.selectedCategories.includes(category);
-                return (
-                  <button
-                    disabled={loading || (store.gameMode === "duel" && !isHost)}
-                    key={category}
-                    onClick={async () => {
-                      store.toggleCategory(category);
-                      if (onSyncCategories) await onSyncCategories();
-                    }}
-                    className={`px-3 py-1 rounded-xl text-[10px] font-bold uppercase tracking-widest disabled:opacity-50 transition-all border ${
-                      active
-                        ? "bg-primary border-primary text-primary-foreground shadow-lg"
-                        : "bg-secondary/5 border-border text-primary/50 hover:bg-secondary/10"
-                    }`}
-                  >
-                    {category}
-                  </button>
-                );
-              })}
-            </div>
-            <div className="flex items-center gap-2">
-              {store.gameMode === "duel" && !isHost && (
-                <p className="text-[10px] hidden md:block text-primary/40 uppercase tracking-widest">
-                  Only the host can request a new deck.
-                </p>
-              )}
-              <button
-                onClick={fetchWords}
-                disabled={loading || (store.gameMode === "duel" && !isHost)}
-                className="px-4 py-1 bg-primary text-primary-foreground font-bold rounded-xl transition-all hover:bg-primary/90 disabled:opacity-50"
-              >
-                {loading ? "Refreshing..." : "New Deck of Words"}
-              </button>
-            </div>
-          </div>
-        )}
+        <SpeedCardsDeckControls
+          loading={loading}
+          isHost={isHost}
+          fetchWords={fetchWords}
+          onSyncCategories={onSyncCategories}
+        />
 
         {/* Progress / Scores */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {Object.values(store.players).map((player) => {
-            const t = timers ? timers[player.id] : undefined;
-            const isActive = player.id === store.activePlayerId;
-            return (
-              <div
-                key={player.id}
-                className={`p-4 rounded-2xl border transition-all ${
-                  isActive
-                    ? "border-primary/70 bg-primary/10 shadow-[0_0_0_1px_rgba(56,189,248,0.3)]"
-                    : "border-border bg-secondary/5"
-                }`}
-              >
-                <div className="flex flex-col gap-3 text-xs mb-3 uppercase font-bold tracking-widest">
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-2">
-                      <span className="font-semibold">
-                        {player.id === store.myPlayerId
-                          ? `${player.name} (You)`
-                          : player.name}
-                      </span>
-                      {isActive && (
-                        <span className="rounded-full bg-primary/20 text-primary px-2 py-0.5 text-[10px] uppercase font-black">
-                          Active
-                        </span>
-                      )}
-                    </div>
-                    <span className="text-[11px] font-mono text-primary/70">
-                      {player.matches} / {player.total}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between gap-3 text-[11px] text-primary/70">
-                    <span>Timer</span>
-                    <span className="font-black text-primary">
-                      {t && t.remaining !== null ? `${t.remaining}s` : "--"}
-                    </span>
-                  </div>
-                </div>
-                <div className="h-3 bg-black/10 rounded-full overflow-hidden border border-border shadow-inner">
-                  <div
-                    className={`h-full ${
-                      isActive
-                        ? "bg-linear-to-r from-cyan-500 via-sky-400 to-blue-500"
-                        : "bg-secondary/30"
-                    } transition-all duration-200`}
-                    style={{
-                      width: `${t && t.percent ? t.percent : 0}%`,
-                    }}
-                  />
-                </div>
-              </div>
-            );
-          })}
+          {Object.keys(store.players).map((playerId) => (
+            <SpeedCardsPlayerCard
+              key={playerId}
+              playerId={playerId}
+              timer={timers?.[playerId]}
+            />
+          ))}
         </div>
 
         {/* Cards Grid */}
