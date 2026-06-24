@@ -1,18 +1,17 @@
 import { useSpeedCardsStore } from "@/store/useSpeedCardsStore";
 
 interface SpeedCardsHeaderProps {
-  roomCode: string | null;
   onQuit: () => void;
 }
 
 export const SpeedCardsHeader = ({
-  roomCode,
   onQuit,
 }: SpeedCardsHeaderProps) => {
   const selectedCategories = useSpeedCardsStore(
     (state) => state.selectedCategories,
   );
-  const turnTime = useSpeedCardsStore((state) => state.turnTime);
+  const turnTime = useSpeedCardsStore((s) => s.turnTime);
+  const roomCode = useSpeedCardsStore((s)=>s.roomCode)
 
   return (
     <div className="flex justify-between items-center mb-8">

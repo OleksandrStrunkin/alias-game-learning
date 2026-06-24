@@ -101,7 +101,6 @@ export default function SpeedCardsPage() {
       )}
 
       <SpeedCardsHeader
-        roomCode={store.roomCode}
         onQuit={leaveLobby}
       />
 
