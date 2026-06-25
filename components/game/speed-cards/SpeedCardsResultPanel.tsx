@@ -127,7 +127,7 @@ export const SpeedCardsResultPanel = ({
               <button
                 onClick={fetchWords}
                 disabled={loading}
-                className="px-6 py-3 bg-primary text-primary-foreground font-bold rounded-xl hover:scale-105 transition-transform"
+                className="px-6 py-3 mx-auto w-1/2 bg-primary text-primary-foreground font-bold rounded-xl hover:bg-primary/80 transition-transform"
               >
                 {loading ? "Resetting..." : "Play Again 🔄"}
               </button>
@@ -142,7 +142,7 @@ export const SpeedCardsResultPanel = ({
         <button
           onClick={fetchWords}
           disabled={loading}
-          className="px-6 py-3 bg-primary text-primary-foreground font-bold rounded-xl hover:scale-105 transition-transform"
+          className="px-6 py-3 mx-auto w-1/2 bg-primary text-primary-foreground font-bold rounded-xl hover:bg-primary/80 transition-transform"
         >
           {loading ? "Loading..." : "Play Again? 🔄"}
         </button>
