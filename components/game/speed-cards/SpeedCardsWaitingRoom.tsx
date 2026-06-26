@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
 import { useSpeedCardsStore } from "@/store/useSpeedCardsStore";
-import type { SpeedCardsState } from "@/store/useSpeedCardsStore";
 import { RoomCodeCopy } from "@/components/common/RoomCodeCopy";
 
 interface SpeedCardsWaitingRoomProps {
-  store: SpeedCardsState;
   playerIds: string[];
   isHost: boolean;
   loading: boolean;
@@ -14,7 +12,6 @@ interface SpeedCardsWaitingRoomProps {
 }
 
 export const SpeedCardsWaitingRoom = ({
-  store,
   playerIds,
   isHost,
   loading,
@@ -22,19 +19,25 @@ export const SpeedCardsWaitingRoom = ({
   onSubmitPlayerName,
   pushUpdate,
 }: SpeedCardsWaitingRoomProps) => {
-  const currentPlayer = store.myPlayerId
-    ? store.players[store.myPlayerId]
-    : undefined;
-  const [playerName, setPlayerName] = useState(currentPlayer?.name || "");
   const categories = ["A2", "B1", "B2"];
+
   const turnTime = useSpeedCardsStore((s) => s.turnTime);
+  const roomCode = useSpeedCardsStore((s) => s.roomCode);
+  const hostId = useSpeedCardsStore((s) => s.hostId);
+  const gameMode = useSpeedCardsStore((s) => s.gameMode);
+  const players = useSpeedCardsStore((s) => s.players);
+  const myPlayerId = useSpeedCardsStore((s) => s.myPlayerId);
+
+  const toggleCategory = useSpeedCardsStore((s) => s.toggleCategory);
+  const selectedCategories = useSpeedCardsStore((s) => s.selectedCategories);
   const setTurnTime = useSpeedCardsStore((s) => s.setTurnTime);
 
-  const { roomCode } = store;
+  const currentPlayer = myPlayerId ? players[myPlayerId] : undefined;
+  const [playerName, setPlayerName] = useState(currentPlayer?.name || "");
 
   const handleToggleCategory = async (category: string) => {
-    store.toggleCategory(category);
-    if (store.roomCode) {
+    toggleCategory(category);
+    if (roomCode) {
       await pushUpdate();
     }
   };
@@ -52,13 +55,11 @@ export const SpeedCardsWaitingRoom = ({
     await onSubmitPlayerName(playerName.trim());
   };
 
-  
-
   return (
     <div className="w-full relative max-w-4xl backdrop-blur-xl bg-secondary/10 border border-border shadow-2xl shadow-black/40 rounded-[2.5rem] p-10 text-center">
-      {store.gameMode === "duel" ? (
+      {gameMode === "duel" ? (
         <div className="space-y-6">
-          <RoomCodeCopy roomCode={roomCode}/>
+          <RoomCodeCopy roomCode={roomCode} />
           <div className="flex flex-col gap-5 md:flex-row">
             <div className="flex-1/2 bg-secondary/50 border border-border/50 p-5 rounded-sm shadow-inner mx-auto max-w-2xl">
               <h3 className="text-primary/50 text-sm font-black uppercase tracking-[0.2em] mb-4">
@@ -66,7 +67,7 @@ export const SpeedCardsWaitingRoom = ({
               </h3>
               <div className="flex flex-wrap justify-center gap-2">
                 {categories.map((category) => {
-                  const active = store.selectedCategories.includes(category);
+                  const active = selectedCategories.includes(category);
                   return (
                     <button
                       key={category}
@@ -95,7 +96,7 @@ export const SpeedCardsWaitingRoom = ({
                         key={t}
                         onClick={async () => {
                           setTurnTime(t === 0 ? null : t);
-                          if (store.roomCode) await pushUpdate();
+                          if (roomCode) await pushUpdate();
                         }}
                         className={`px-4 py-2 rounded-sm text-xs font-bold uppercase tracking-widest transition-all border ${
                           isActive
@@ -129,13 +130,13 @@ export const SpeedCardsWaitingRoom = ({
                     className="bg-secondary/10 p-4 rounded-sm border border-border"
                   >
                     <div className="text-2xl mb-1">
-                      {pId === store.hostId ? "👑" : "⚔️"}
+                      {pId === hostId ? "👑" : "⚔️"}
                     </div>
                     <div className="text-sm font-bold">
-                      {store.players[pId].name}
+                      {players[pId].name}
                     </div>
                     <div className="text-xs opacity-50 font-mono mt-1">
-                      {pId === store.myPlayerId ? "You" : "Opponent"}
+                      {pId === myPlayerId ? "You" : "Opponent"}
                     </div>
                   </div>
                 ))}
@@ -143,9 +144,7 @@ export const SpeedCardsWaitingRoom = ({
                   <div className="bg-secondary/5 p-4 rounded-sm border border-border/50 border-dashed flex flex-col items-center justify-center text-primary/40">
                     <div className="animate-pulse text-2xl">⏳</div>
                     <div className="text-sm font-bold mt-2">Waiting...</div>
-                    <div className="text-xs tracking-wider mt-1">
-                      Player 2
-                    </div>
+                    <div className="text-xs tracking-wider mt-1">Player 2</div>
                   </div>
                 )}
               </div>
@@ -194,7 +193,7 @@ export const SpeedCardsWaitingRoom = ({
                   <div>
                     Share the code
                     <span className="font-mono bg-primary/10 px-2 py-0.5 rounded border border-primary/20 mx-2">
-                      {store.roomCode}
+                      {roomCode}
                     </span>
                     to invite your friend!
                   </div>

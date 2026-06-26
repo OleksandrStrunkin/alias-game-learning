@@ -107,7 +107,6 @@ export default function SpeedCardsPage() {
       {/* Lobby waiting room or Active Game screen */}
       {!store.isGameStarted ? (
         <SpeedCardsWaitingRoom
-          store={store}
           playerIds={playerIds}
           isHost={isHost}
           loading={loading}
