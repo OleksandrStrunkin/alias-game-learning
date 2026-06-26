@@ -117,7 +117,6 @@ export default function SpeedCardsPage() {
         />
       ) : (
         <SpeedCardsGameBoard
-          store={store}
           isMyTurn={isMyTurn}
           isHost={isHost}
           loading={loading}
