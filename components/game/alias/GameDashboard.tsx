@@ -2,6 +2,7 @@
 import { useAliasStore } from "@/store/useAliasStore";
 import { GamePanel } from "./GamePanel";
 import { TeamHistoryCard } from "./TeamHistoryCard";
+import { useSearchParams } from "next/navigation";
 
 interface GameDashboardProps {
   fetchWord: () => Promise<void>;
@@ -16,14 +17,21 @@ export const GameDashboard = ({
   pushUpdate,
   leaveLobby,
 }: GameDashboardProps) => {
-  const store = useAliasStore();
+  const roomCode = useAliasStore((s) => s.roomCode);
+  const selectedCategories = useAliasStore((s) => s.selectedCategories);
+  const teams = useAliasStore((s) => s.teams);
+  const currentTeamIndex = useAliasStore((s) => s.currentTeamIndex);
+  const isGameStarted = useAliasStore((s) => s.isGameStarted);
+
+  const toggleCategory = useAliasStore((s) => s.toggleCategory);
+  const newRound = useAliasStore((s) => s.newRound);
 
   return (
     <div className="flex flex-col items-center md:justify-center">
       <div className="w-full max-w-7xl grid lg:grid-cols-12 gap-6 h-[85vh]">
         <main className="lg:col-span-5 relative flex flex-col p-6 rounded-xl backdrop-blur-xl bg-secondary/10 border border-border shadow-2xl shadow-black/40">
           <div className="mb-4 text-xs font-black text-primary/60 uppercase tracking-widest">
-            Room: {store.roomCode}
+            Room: {roomCode}
           </div>
 
           <GamePanel fetchWord={fetchWord} loading={loading} />
@@ -34,12 +42,12 @@ export const GameDashboard = ({
             </p>
             <div className="flex justify-center gap-1.5">
               {["A2", "B1", "B2", "API"].map((cat) => {
-                const isActive = store.selectedCategories.includes(cat);
+                const isActive = selectedCategories.includes(cat);
                 return (
                   <button
                     key={cat}
                     onClick={() => {
-                      store.toggleCategory(cat);
+                      toggleCategory(cat);
                       setTimeout(
                         () => pushUpdate(useAliasStore.getState()),
                         50,
@@ -60,7 +68,7 @@ export const GameDashboard = ({
           <div className="mt-auto pt-4 flex gap-2">
             <button
               onClick={() => {
-                store.newRound();
+                newRound();
                 pushUpdate(useAliasStore.getState());
               }}
               className="flex-1 py-3 text-[10px] font-black uppercase rounded-xl bg-secondary/5 text-primary/40 hover:text-primary hover:bg-secondary/10 transition-all shadow-inner"
@@ -78,12 +86,12 @@ export const GameDashboard = ({
           </div>
         </main>
         <aside className="grid-cols-2 gap-1 lg:col-span-7 grid md:grid-cols-2 md:gap-6">
-          {store.teams.map((team, idx) => (
+          {teams.map((team, idx) => (
             <TeamHistoryCard
               key={idx}
               team={team}
               index={idx}
-              isActive={idx === store.currentTeamIndex && store.isGameStarted}
+              isActive={idx === currentTeamIndex && isGameStarted}
             />
           ))}
         </aside>
