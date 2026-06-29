@@ -8,11 +8,12 @@ import { useAliasStore } from "@/store/useAliasStore";
 import { AliasLobbyAuth } from "@/components/game/alias/lobby/AliasLobbyAuth";
 import { AliasWaitingRoom } from "@/components/game/alias/lobby/AliasWaitingRoom";
 import { GameDashboard } from "@/components/game/alias/GameDashboard";
-import { AliasHeader } from "@/components/game/alias/AliasHeader"
+import { AliasHeader } from "@/components/game/alias/AliasHeader";
 
 export default function AliasPage() {
   const store = useAliasStore();
   const roomCode = useAliasStore((state) => state.roomCode);
+  const teams = useAliasStore((state) => state.teams);
   const syncFromSupabase = useAliasStore((state) => state.syncFromSupabase);
   const setRoomCode = useAliasStore((state) => state.setRoomCode);
   const setMyPlayerId = useAliasStore((state) => state.setMyPlayerId);
@@ -77,7 +78,7 @@ export default function AliasPage() {
     }
   }, [store]);
 
-  if (!store.roomCode) {
+  if (!roomCode) {
     return (
       <AliasLobbyAuth
         gameId="alias"
@@ -87,7 +88,7 @@ export default function AliasPage() {
     );
   }
 
-  if (store.teams.length < 2) {
+  if (teams.length < 2) {
     return (
       <>
         <AliasHeader onQuit={leaveLobby} roomCode={roomCode} />
