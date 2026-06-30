@@ -26,7 +26,7 @@ export const SpeedCardsGameWordCard = ({
     <button
       onClick={() => !card.isMatched && handleSelectCard(card.id)}
       disabled={card.isMatched || !isMyTurn || hasFailedPair}
-      className={`h-24 p-2 rounded-2xl border-2 transition-all flex items-center justify-center text-center font-bold text-lg leading-tight
+      className={`h-24 p-2 rounded-2xl border-2 transition-all flex items-center justify-center text-center font-bold uppercase text-[clamp(1rem,1vw,1.5rem)] leading-tight
         ${
           card.isMatched
             ? "opacity-0 scale-90 pointer-events-none"
